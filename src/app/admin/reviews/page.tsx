@@ -15,7 +15,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFo
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { LuSearch as Search, LuX as X, LuStar as Star, LuFilter as Filter, LuEye as Eye, LuEyeOff as EyeOff, LuCheck as Check, LuX as XCircle, LuTrash2 as Trash2, LuThumbsUp as ThumbsUp, LuFlag as Flag, LuUser as User, LuBookOpen as BookOpen, LuCalendar as Calendar, LuArrowUpDown as ArrowUpDown, LuSettings as Settings, LuBan as Ban, LuLockOpen as Unlock, LuPlay as Play } from 'react-icons/lu';
+import { LuSearch as Search, LuX as X, LuStar as Star, LuFilter as Filter, LuEye as Eye, LuEyeOff as EyeOff, LuCheck as Check, LuX as XCircle, LuTrash2 as Trash2, LuThumbsUp as ThumbsUp, LuFlag as Flag, LuUser as User, LuBookOpen as BookOpen, LuCalendar as Calendar, LuArrowUpDown as ArrowUpDown, LuSettings as Settings, LuBan as Ban, LuLockOpen as Unlock, LuPlay as Play, LuDatabase as Database } from 'react-icons/lu';
 import { CourseReview, ReviewFilters as ReviewFiltersType } from '@/types/course-review';
 
 function ReviewsPageContent() {
@@ -59,6 +59,7 @@ function ReviewsPageContent() {
     reportedReviews: 0,
     averageRating: 0
   });
+  const [seeding, setSeeding] = useState(false);
 
   const fetchReviews = async () => {
     try {
@@ -349,6 +350,35 @@ function ReviewsPageContent() {
     return count;
   };
 
+  const handleSeedReviews = async () => {
+    if (!confirm('This will create reviews for all courses. Existing reviews will be skipped. Continue?')) {
+      return;
+    }
+
+    setSeeding(true);
+    try {
+      const response = await fetch('/api/admin/seed-reviews', {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(`Reviews seeded successfully!\n\nCreated: ${data.data.reviewsCreated} reviews\nEnrollments created: ${data.data.enrollmentsCreated}\nSkipped (already exist): ${data.data.reviewsSkipped}`);
+        // Refresh reviews and stats
+        fetchReviews();
+        fetchStats();
+      } else {
+        alert(`Failed to seed reviews: ${data.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error seeding reviews:', error);
+      alert(`Error seeding reviews: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setSeeding(false);
+    }
+  };
+
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
@@ -443,6 +473,32 @@ function ReviewsPageContent() {
           className="mb-2 sm:mb-4"
           actions={
             <div className="flex flex-col sm:flex-row gap-2 w-full">
+              <Button 
+                onClick={handleSeedReviews}
+                disabled={seeding}
+                className="flex items-center gap-2 text-white font-semibold transition-all duration-200 disabled:opacity-50"
+                style={{
+                  background: seeding 
+                    ? "linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)"
+                    : "linear-gradient(135deg, #10B981 0%, #14B8A6 100%)",
+                  boxShadow: seeding ? "none" : "0 4px 15px rgba(16, 185, 129, 0.3)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!seeding) {
+                    e.currentTarget.style.background = "linear-gradient(135deg, #059669 0%, #0D9488 100%)";
+                    e.currentTarget.style.boxShadow = "0 6px 20px rgba(16, 185, 129, 0.4)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!seeding) {
+                    e.currentTarget.style.background = "linear-gradient(135deg, #10B981 0%, #14B8A6 100%)";
+                    e.currentTarget.style.boxShadow = "0 4px 15px rgba(16, 185, 129, 0.3)";
+                  }
+                }}
+              >
+                <Database className={`w-4 h-4 ${seeding ? 'animate-spin' : ''}`} />
+                <span>{seeding ? 'Seeding Reviews...' : 'Seed Reviews'}</span>
+              </Button>
               <Button 
                 onClick={() => setShowFilterDrawer(true)}
                 variant="outline"
