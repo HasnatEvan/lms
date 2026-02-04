@@ -391,128 +391,144 @@ export default function RegisterPage() {
                 )}
               </div>
 
-              {/* First Name Field */}
-              <div className="space-y-2">
-                <label htmlFor="firstName" className="text-sm font-medium text-gray-700">
-                  First Name
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <Input
-                    id="firstName"
-                    type="text"
-                    placeholder="Enter your first name"
-                    className="pl-10 h-11 border-gray-200 focus:border-[#7B2CBF] focus:ring-[#7B2CBF]/20"
-                    value={formData.firstName}
-                    onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                    required
-                  />
+              {/* Two Column Layout for Name Fields */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* First Name Field */}
+                <div className="space-y-2">
+                  <label htmlFor="firstName" className="text-sm font-medium text-gray-700">
+                    First Name
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      id="firstName"
+                      type="text"
+                      placeholder="Enter your first name"
+                      className={`pl-10 h-11 border-gray-200 focus:border-[#7B2CBF] focus:ring-[#7B2CBF]/20 ${
+                        validationErrors.firstName ? 'border-red-300 focus:border-red-500' : ''
+                      }`}
+                      value={formData.firstName}
+                      onChange={(e) => {
+                        setFormData({...formData, firstName: e.target.value});
+                        if (validationErrors.firstName) {
+                          setValidationErrors({...validationErrors, firstName: ''});
+                        }
+                      }}
+                      required
+                    />
+                  </div>
+                  {validationErrors.firstName && (
+                    <p className="text-xs text-red-600">{validationErrors.firstName}</p>
+                  )}
+                </div>
+
+                {/* Last Name Field */}
+                <div className="space-y-2">
+                  <label htmlFor="lastName" className="text-sm font-medium text-gray-700">
+                    Last Name
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      id="lastName"
+                      type="text"
+                      placeholder="Enter your last name"
+                      className={`pl-10 h-11 border-gray-200 focus:border-[#7B2CBF] focus:ring-[#7B2CBF]/20 ${
+                        validationErrors.lastName ? 'border-red-300 focus:border-red-500' : ''
+                      }`}
+                      value={formData.lastName}
+                      onChange={(e) => {
+                        setFormData({...formData, lastName: e.target.value});
+                        if (validationErrors.lastName) {
+                          setValidationErrors({...validationErrors, lastName: ''});
+                        }
+                      }}
+                      required
+                    />
+                  </div>
+                  {validationErrors.lastName && (
+                    <p className="text-xs text-red-600">{validationErrors.lastName}</p>
+                  )}
                 </div>
               </div>
 
-              {/* Last Name Field */}
-              <div className="space-y-2">
-                <label htmlFor="lastName" className="text-sm font-medium text-gray-700">
-                  Last Name
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <Input
-                    id="lastName"
-                    type="text"
-                    placeholder="Enter your last name"
-                    className={`pl-10 h-11 border-gray-200 focus:border-[#7B2CBF] focus:ring-[#7B2CBF]/20 ${
-                      validationErrors.lastName ? 'border-red-300 focus:border-red-500' : ''
-                    }`}
-                    value={formData.lastName}
-                    onChange={(e) => {
-                      setFormData({...formData, lastName: e.target.value});
-                      if (validationErrors.lastName) {
-                        setValidationErrors({...validationErrors, lastName: ''});
-                      }
-                    }}
-                    required
-                  />
+              {/* Two Column Layout for Phone and Password */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Phone Field */}
+                <div className="space-y-2">
+                  <label htmlFor="phone" className="text-sm font-medium text-gray-700">
+                    Phone Number
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="Enter your phone number"
+                      className={`pl-10 h-11 border-gray-200 focus:border-[#7B2CBF] focus:ring-[#7B2CBF]/20 ${
+                        validationErrors.phone ? 'border-red-300 focus:border-red-500' : ''
+                      }`}
+                      value={formData.phone}
+                      onChange={(e) => {
+                        setFormData({...formData, phone: e.target.value});
+                        if (validationErrors.phone) {
+                          setValidationErrors({...validationErrors, phone: ''});
+                        }
+                      }}
+                      required
+                    />
+                  </div>
+                  {validationErrors.phone ? (
+                    <p className="text-xs text-red-600">{validationErrors.phone}</p>
+                  ) : (
+                    <p className="text-xs text-gray-500">
+                      Enter your phone number (e.g., 01712345678)
+                    </p>
+                  )}
                 </div>
-                {validationErrors.lastName && (
-                  <p className="text-xs text-red-600">{validationErrors.lastName}</p>
-                )}
+
+                {/* Password Field */}
+                <div className="space-y-2">
+                  <label htmlFor="password" className="text-sm font-medium text-gray-700">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Create a password"
+                      className={`pl-10 pr-10 h-11 border-gray-200 focus:border-[#7B2CBF] focus:ring-[#7B2CBF]/20 ${
+                        validationErrors.password ? 'border-red-300 focus:border-red-500' : ''
+                      }`}
+                      value={formData.password}
+                      onChange={(e) => {
+                        setFormData({...formData, password: e.target.value});
+                        if (validationErrors.password) {
+                          setValidationErrors({...validationErrors, password: ''});
+                        }
+                        // Clear confirm password error if passwords now match
+                        if (validationErrors.confirmPassword && e.target.value === formData.confirmPassword) {
+                          setValidationErrors({...validationErrors, confirmPassword: ''});
+                        }
+                      }}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  {validationErrors.password && (
+                    <p className="text-xs text-red-600">{validationErrors.password}</p>
+                  )}
+                </div>
               </div>
 
-              {/* Phone Field */}
-              <div className="space-y-2">
-                <label htmlFor="phone" className="text-sm font-medium text-gray-700">
-                  Phone Number
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="Enter your phone number"
-                    className={`pl-10 h-11 border-gray-200 focus:border-[#7B2CBF] focus:ring-[#7B2CBF]/20 ${
-                      validationErrors.phone ? 'border-red-300 focus:border-red-500' : ''
-                    }`}
-                    value={formData.phone}
-                    onChange={(e) => {
-                      setFormData({...formData, phone: e.target.value});
-                      if (validationErrors.phone) {
-                        setValidationErrors({...validationErrors, phone: ''});
-                      }
-                    }}
-                    required
-                  />
-                </div>
-                {validationErrors.phone ? (
-                  <p className="text-xs text-red-600">{validationErrors.phone}</p>
-                ) : (
-                  <p className="text-xs text-gray-500">
-                    Enter your phone number (e.g., 01712345678)
-                  </p>
-                )}
-              </div>
-
-              {/* Password Field */}
-              <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium text-gray-700">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Create a password"
-                    className={`pl-10 pr-10 h-11 border-gray-200 focus:border-[#7B2CBF] focus:ring-[#7B2CBF]/20 ${
-                      validationErrors.password ? 'border-red-300 focus:border-red-500' : ''
-                    }`}
-                    value={formData.password}
-                    onChange={(e) => {
-                      setFormData({...formData, password: e.target.value});
-                      if (validationErrors.password) {
-                        setValidationErrors({...validationErrors, password: ''});
-                      }
-                      // Clear confirm password error if passwords now match
-                      if (validationErrors.confirmPassword && e.target.value === formData.confirmPassword) {
-                        setValidationErrors({...validationErrors, confirmPassword: ''});
-                      }
-                    }}
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-                {validationErrors.password && (
-                  <p className="text-xs text-red-600">{validationErrors.password}</p>
-                )}
-              </div>
-
-              {/* Confirm Password Field */}
+              {/* Confirm Password Field - Full Width */}
               <div className="space-y-2">
                 <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
                   Confirm Password

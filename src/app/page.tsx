@@ -44,7 +44,7 @@ export default async function Home() {
     .sort((a, b) => a.order - b.order);
 
   return (
-    <div>
+    <div className="home-page [&_.max-w-7xl]:!max-w-9xl">
       {/* Header and Hero are always in the background div */}
       {enabledSections.some(s => s.id === 'header' || s.id === 'hero') && (
       <div

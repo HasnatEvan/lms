@@ -12,7 +12,8 @@
     "create-admin": "bun run scripts/create-admin.js",
     "create-student": "bun run scripts/create-student.js",
     "create-teacher": "bun run scripts/create-teacher.js",
-    "migrate-users": "bun run scripts/migrate-users-to-phone.js"
+    "migrate-users": "bun run scripts/migrate-users-to-phone.js",
+    "seed-reviews": "node scripts/seed-reviews.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.956.0",
