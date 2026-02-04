@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import CourseCard from "./CourseCard";
 import type { CourseDetailsData, ChapterWithLessons } from '@/lib/course-details';
 import { useHasScrolled } from "@/hooks/useHasScrolled";
@@ -16,6 +16,7 @@ import StickySidebar from "./StickySidebar";
 import type { FAQContent } from '@/constants/faqContent';
 import { defaultFAQContent } from '@/constants/faqContent';
 import { LuPlay as Play } from 'react-icons/lu';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 export interface CourseFAQItem {
   _id: string;
   question: string;
@@ -152,12 +153,109 @@ export default function CourseDetails({
   const [enrollmentLoading, setEnrollmentLoading] = useState(false);
   const [enrollmentError, setEnrollmentError] = useState<string | null>(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginPhone, setLoginPhone] = useState("01700000009");
+  const [loginPassword, setLoginPassword] = useState("student123");
+  const [loginSubmitting, setLoginSubmitting] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [pendingEnrollment, setPendingEnrollment] = useState(false);
   const isMobile = useIsMobile();
   const isScrolledForStickySidebar = useHasScrolled({
     threshold: 700,
     enabled: !isMobile, // Only enable scroll detection on large screens
   });
   const [isStickySidebarVisible, setIsStickySidebarVisible] = useState(false);
+
+  const performEnrollment = async () => {
+    if (!course || !courseId) return;
+
+    setEnrollmentLoading(true);
+    setEnrollmentError(null);
+
+    try {
+      // Check if course is free
+      if (!course.isPaid) {
+        // For free courses, enroll directly
+        const response = await fetch('/api/enrollments', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            course: courseId,
+            paymentStatus: 'paid', // Free courses are considered paid
+            paymentAmount: 0,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to enroll in course');
+        }
+
+        setIsEnrolled(true);
+        // Show success message
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      } else {
+        // For paid courses, initiate payment
+        const result = await initiatePayment({
+          courseId: courseId,
+        });
+
+        if (result.success && result.data?.gatewayUrl) {
+          // Redirect to payment gateway
+          window.location.href = result.data.gatewayUrl;
+        } else {
+          throw new Error(result.error || 'Failed to initiate payment');
+        }
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to enroll in course';
+      setEnrollmentError(errorMessage);
+      console.error('Enrollment error:', error);
+
+      // Show error toast
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } finally {
+      setEnrollmentLoading(false);
+    }
+  };
+
+  const handleLoginAndContinue = async () => {
+    setLoginSubmitting(true);
+    setLoginError(null);
+    try {
+      const result = await signIn("credentials", {
+        phone: loginPhone,
+        password: loginPassword,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setLoginError(result.error);
+        return;
+      }
+
+      setShowLoginModal(false);
+      // When session updates, we'll continue enrollment automatically
+      setPendingEnrollment(true);
+      router.refresh();
+    } catch (e) {
+      setLoginError(e instanceof Error ? e.message : "Login failed");
+    } finally {
+      setLoginSubmitting(false);
+    }
+  };
+
+  useEffect(() => {
+    if (pendingEnrollment && sessionStatus === "authenticated") {
+      setPendingEnrollment(false);
+      performEnrollment();
+    }
+  }, [pendingEnrollment, sessionStatus]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fetch course data (fallback if not provided server-side)
   useEffect(() => {
@@ -448,73 +546,18 @@ export default function CourseDetails({
     if (!course || !courseId) return;
 
     // Check authentication
-    if (!session) {
-      if (sessionStatus === 'unauthenticated') {
-        router.push('/auth/signin?callbackUrl=' + encodeURIComponent(window.location.pathname));
-        return;
-      }
-      // If still loading, wait
-      if (sessionStatus === 'loading') {
-        return;
-      }
+    if (!session || sessionStatus === "unauthenticated") {
+      setPendingEnrollment(true);
+      setShowLoginModal(true);
+      return;
     }
 
-    setEnrollmentLoading(true);
-    setEnrollmentError(null);
-
-    try {
-      // Check if course is free
-      if (!course.isPaid) {
-        // For free courses, enroll directly
-        const response = await fetch('/api/enrollments', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            course: courseId,
-            paymentStatus: 'paid', // Free courses are considered paid
-            paymentAmount: 0,
-          }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to enroll in course');
-        }
-
-        setIsEnrolled(true);
-        // Show success message
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 3000);
-        
-        // Optionally redirect to course or refresh page
-        // window.location.href = `/course/${courseId}`;
-      } else {
-        // For paid courses, initiate payment
-        const result = await initiatePayment({
-          courseId: courseId,
-        });
-
-        if (result.success && result.data?.gatewayUrl) {
-          // Redirect to payment gateway
-          window.location.href = result.data.gatewayUrl;
-        } else {
-          throw new Error(result.error || 'Failed to initiate payment');
-        }
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to enroll in course';
-      setEnrollmentError(errorMessage);
-      console.error('Enrollment error:', error);
-      
-      // Show error toast
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
-    } finally {
-      setEnrollmentLoading(false);
+    // If still loading, wait
+    if (sessionStatus === 'loading') {
+      return;
     }
+
+    performEnrollment();
   };
 
   const isCourseInCart = course ? isInCart(course._id) : false;
@@ -699,6 +742,98 @@ export default function CourseDetails({
 
   return (
     <>
+    <Dialog
+      open={showLoginModal}
+      onOpenChange={(open) => {
+        setShowLoginModal(open);
+        setLoginError(null);
+        if (!open) {
+          setPendingEnrollment(false);
+        }
+      }}
+    >
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Login required to enroll</DialogTitle>
+          <DialogDescription>
+            To enroll in this course, please login first. You can use the demo student credentials below.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+            <div className="font-semibold">Demo student</div>
+            <div className="mt-1 grid grid-cols-1 gap-1">
+              <div><span className="font-medium">Phone:</span> 01700000009</div>
+              <div><span className="font-medium">Password:</span> student123</div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-gray-700" htmlFor="demo-login-phone">
+                Phone
+              </label>
+              <input
+                id="demo-login-phone"
+                value={loginPhone}
+                onChange={(e) => setLoginPhone(e.target.value)}
+                className="h-11 w-full rounded-md border border-gray-200 bg-white px-3 text-sm outline-none focus:border-[#7B2CBF] focus:ring-2 focus:ring-[#7B2CBF]/20"
+                placeholder="017xxxxxxxx"
+                autoComplete="tel"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-gray-700" htmlFor="demo-login-password">
+                Password
+              </label>
+              <input
+                id="demo-login-password"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                className="h-11 w-full rounded-md border border-gray-200 bg-white px-3 text-sm outline-none focus:border-[#7B2CBF] focus:ring-2 focus:ring-[#7B2CBF]/20"
+                placeholder="Enter password"
+                type="password"
+                autoComplete="current-password"
+              />
+            </div>
+          </div>
+
+          {loginError && (
+            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              {loginError}
+            </div>
+          )}
+
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+            <button
+              type="button"
+              onClick={() => {
+                setLoginPhone("01700000009");
+                setLoginPassword("student123");
+              }}
+              className="h-11 rounded-md border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              disabled={loginSubmitting}
+            >
+              Use demo credentials
+            </button>
+            <button
+              type="button"
+              onClick={handleLoginAndContinue}
+              className="h-11 rounded-md px-4 text-sm font-semibold text-white disabled:opacity-50"
+              style={{
+                background: "linear-gradient(135deg, #EC4899 0%, #A855F7 100%)",
+                boxShadow: "0 4px 15px rgba(236, 72, 153, 0.3)",
+              }}
+              disabled={loginSubmitting || !loginPhone || !loginPassword}
+            >
+              {loginSubmitting ? "Logging in..." : "Login & Continue"}
+            </button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+
     <div className="min-h-screen relative bg-gray-50 ">
       {/* Toast Notification */}
       {showToast && (
