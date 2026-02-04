@@ -16,6 +16,11 @@ export default function CourseDetailsClient() {
   const [chapters, setChapters] = useState<ChapterWithLessons[]>([]);
   const [courseFaqs, setCourseFaqs] = useState<Array<{ _id: string; question: string; answer: string; order: number }>>([]);
 
+  // Scroll to top when page first renders
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [courseId]);
+
   useEffect(() => {
     if (!courseId) return;
 

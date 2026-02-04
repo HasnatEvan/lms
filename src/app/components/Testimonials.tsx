@@ -107,6 +107,10 @@ export default function Testimonials() {
     }
   };
 
+  // Don't display testimonials section if there are no reviews
+  if (!loading && videoReviews.length === 0 && textReviews.length === 0) {
+    return null;
+  }
 
   return (
     <section className="ts-bg relative overflow-hidden py-20 px-4 md:px-6 lg:px-8">
