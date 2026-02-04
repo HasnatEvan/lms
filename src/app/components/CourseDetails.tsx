@@ -101,6 +101,7 @@ export default function CourseDetails({
   const params = useParams();
   const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
+  const sessionStatusTyped: "authenticated" | "unauthenticated" | "loading" = sessionStatus;
   const courseId = propCourseId || (params?.id as string);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loading, setLoading] = useState(!initialCourse);
@@ -251,11 +252,11 @@ export default function CourseDetails({
   };
 
   useEffect(() => {
-    if (pendingEnrollment && sessionStatus === "authenticated") {
+    if (pendingEnrollment && sessionStatusTyped === "authenticated") {
       setPendingEnrollment(false);
       performEnrollment();
     }
-  }, [pendingEnrollment, sessionStatus]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pendingEnrollment, sessionStatusTyped]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fetch course data (fallback if not provided server-side)
   useEffect(() => {
@@ -546,14 +547,14 @@ export default function CourseDetails({
     if (!course || !courseId) return;
 
     // Check authentication
-    if (!session || sessionStatus === "unauthenticated") {
+    if (!session || sessionStatusTyped === "unauthenticated") {
       setPendingEnrollment(true);
       setShowLoginModal(true);
       return;
     }
 
     // If still loading, wait
-    if (sessionStatus === 'loading') {
+    if (sessionStatusTyped === "loading") {
       return;
     }
 
