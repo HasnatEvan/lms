@@ -10,11 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Collapsible, CollapsibleContent, CollapsibleHeader } from '@/components/ui/collapsible';
 import confetti from 'canvas-confetti';
-import * as PlyrModule from 'plyr';
-import 'plyr/dist/plyr.css';
-
-// Plyr is exported as default but TypeScript types don't reflect this properly
-const Plyr = (PlyrModule as any).default || PlyrModule;
 
 export default function StudentCourseLearningPage() {
   const { data: session, status } = useSession();
@@ -50,8 +45,6 @@ export default function StudentCourseLearningPage() {
   const [hasQuiz, setHasQuiz] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [openChapterId, setOpenChapterId] = useState<string | null>(null);
-  const playerRef = useRef<HTMLDivElement>(null);
-  const plyrInstanceRef = useRef<any>(null);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -111,69 +104,6 @@ export default function StudentCourseLearningPage() {
 
   const selectedLesson = useMemo(() => lessons.find((l: any) => l._id === selectedLessonId), [lessons, selectedLessonId]);
 
-  // Initialize Plyr player when selectedLesson changes
-  useEffect(() => {
-    if (!selectedLesson?.youtubeVideoId || !playerRef.current || hideVideo) {
-      // Clean up existing player if video is hidden or no video available
-      if (plyrInstanceRef.current) {
-        plyrInstanceRef.current.destroy();
-        plyrInstanceRef.current = null;
-      }
-      return;
-    }
-
-    // Clean up existing player before creating a new one
-    if (plyrInstanceRef.current) {
-      plyrInstanceRef.current.destroy();
-      plyrInstanceRef.current = null;
-    }
-
-    // Create new Plyr instance for YouTube video
-    try {
-      const player = new Plyr(playerRef.current, {
-        controls: [
-          'play-large',
-          'play',
-          'progress',
-          'current-time',
-          'mute',
-          'volume',
-          'settings',
-          'fullscreen',
-        ],
-        settings: ['speed', 'quality'],
-        speed: {
-          selected: 1,
-          options: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
-        },
-        youtube: {
-          noCookie: false,
-          rel: 0,
-          showinfo: 0,
-          iv_load_policy: 3,
-          modestbranding: 1,
-        },
-        ratio: '16:9',
-        autopause: true,
-        clickToPlay: true,
-        hideControls: true,
-        resetOnEnd: false,
-        keyboard: { focused: true, global: false },
-      });
-
-      plyrInstanceRef.current = player;
-
-      // Cleanup function
-      return () => {
-        if (plyrInstanceRef.current) {
-          plyrInstanceRef.current.destroy();
-          plyrInstanceRef.current = null;
-        }
-      };
-    } catch (error) {
-      console.error('Failed to initialize Plyr player:', error);
-    }
-  }, [selectedLesson?.youtubeVideoId, hideVideo]);
 
   // Load submission history and check completion when lesson changes
   useEffect(() => {
@@ -202,14 +132,6 @@ export default function StudentCourseLearningPage() {
   }, [courseId, loading]);
 
   // Cleanup Plyr instance on component unmount
-  useEffect(() => {
-    return () => {
-      if (plyrInstanceRef.current) {
-        plyrInstanceRef.current.destroy();
-        plyrInstanceRef.current = null;
-      }
-    };
-  }, []);
 
   // Check if quiz exists for the lesson
   const checkQuizAvailability = async (lessonId: string) => {
@@ -693,12 +615,19 @@ export default function StudentCourseLearningPage() {
               {!hideVideo && (
                 <div className="w-full aspect-video bg-black rounded-lg sm:rounded-xl overflow-hidden shadow-md sm:shadow-lg border border-gray-200">
                   {selectedLesson?.youtubeVideoId ? (
-                    <div 
-                      ref={playerRef}
-                      className="w-full h-full"
-                      data-plyr-provider="youtube"
-                      data-plyr-embed-id={selectedLesson.youtubeVideoId}
-                    />
+                   
+                    <div className="relative w-full h-full">
+                      <iframe
+                        src={`https://www.youtube.com/embed/${selectedLesson.youtubeVideoId}?rel=0&showinfo=0&iv_load_policy=3&modestbranding=1&controls=1`}
+                        title="YouTube video player"
+                        width="100%"
+                        height="100%"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                        className="absolute top-0 left-0 w-full h-full"
+                      ></iframe>
+                    </div>
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-white text-sm sm:text-base">No video</div>
                   )}
