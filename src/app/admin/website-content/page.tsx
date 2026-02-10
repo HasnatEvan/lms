@@ -2220,6 +2220,23 @@ function WebsiteContentPageContent() {
                   return (
                     <Card key={index} className="p-4">
                       <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-semibold text-gray-700">
+                            Feature {index + 1}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                            title="Delete this feature"
+                            onClick={() => {
+                              const newFeatures = currentFeatures.filter((_, i) => i !== index);
+                              updateContent(['about', 'features'], newFeatures.length > 0 ? newFeatures : defaultAboutContent.features);
+                            }}
+                          >
+                            <Trash className="w-4 h-4" />
+                          </Button>
+                        </div>
                         <AttractiveInput
                           value={feature.title}
                           onChange={(e) => {
@@ -2239,16 +2256,27 @@ function WebsiteContentPageContent() {
                           }}
                           placeholder="Feature description"
                         />
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => {
-                            const newFeatures = currentFeatures.filter((_, i) => i !== index);
-                            updateContent(['about', 'features'], newFeatures.length > 0 ? newFeatures : defaultAboutContent.features);
-                          }}
-                        >
-                          Remove Feature
-                        </Button>
+                        <div className="flex gap-2 justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              updateContent(['about', 'features'], [...currentFeatures]);
+                            }}
+                          >
+                            Update Feature
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => {
+                              const newFeatures = currentFeatures.filter((_, i) => i !== index);
+                              updateContent(['about', 'features'], newFeatures.length > 0 ? newFeatures : defaultAboutContent.features);
+                            }}
+                          >
+                            Delete Feature
+                          </Button>
+                        </div>
                       </div>
                     </Card>
                   );
