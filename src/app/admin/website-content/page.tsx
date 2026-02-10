@@ -4118,6 +4118,34 @@ function WebsiteContentPageContent() {
                   return (
                     <Card key={post.id || index} className="p-4">
                       <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-semibold text-gray-700">
+                            Post {index + 1}
+                          </span>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                updateContent(['blog', 'posts'], [...currentPosts]);
+                              }}
+                            >
+                              Update Post
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                              title="Delete this post"
+                              onClick={() => {
+                                const newPosts = currentPosts.filter((_, i) => i !== index);
+                                updateContent(['blog', 'posts'], newPosts.length > 0 ? newPosts : defaultBlogContent.posts);
+                              }}
+                            >
+                              <Trash className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <label className="text-xs text-gray-600 mb-1 block">Image URL</label>
@@ -4264,18 +4292,6 @@ function WebsiteContentPageContent() {
                             className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[#7B2CBF] focus:outline-none focus:ring-2 focus:ring-[#7B2CBF]/20"
                           />
                         </div>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => {
-                            const newPosts = currentPosts.filter((_, i) => i !== index);
-                            updateContent(['blog', 'posts'], newPosts.length > 0 ? newPosts : defaultBlogContent.posts);
-                          }}
-                          className="mt-2"
-                        >
-                          <Trash className="w-4 h-4 mr-2" />
-                          Remove Post
-                        </Button>
                       </div>
                     </Card>
                   );
