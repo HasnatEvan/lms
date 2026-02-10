@@ -2488,6 +2488,23 @@ function WebsiteContentPageContent() {
                   return (
                     <Card key={feature.id || index} className="p-4">
                       <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-semibold text-gray-700">
+                            Feature {index + 1}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                            title="Delete this feature"
+                            onClick={() => {
+                              const newFeatures = currentFeatures.filter((_, i) => i !== index);
+                              updateContent(['whyChooseUs', 'features'], newFeatures.length > 0 ? newFeatures : defaultWhyChooseUsContent.features);
+                            }}
+                          >
+                            <Trash className="w-4 h-4" />
+                          </Button>
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <AttractiveInput
                             value={feature.title}
@@ -2534,8 +2551,8 @@ function WebsiteContentPageContent() {
                             className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[#7B2CBF] focus:outline-none focus:ring-2 focus:ring-[#7B2CBF]/20"
                           />
                         </div>
-                        <div className="flex items-center gap-4">
-                          <div>
+                        <div className="flex flex-wrap items-end justify-between gap-4">
+                          <div className="min-w-[180px]">
                             <label className="text-xs text-gray-600 mb-1 block">Icon Type</label>
                             <select
                               value={feature.iconType}
@@ -2552,17 +2569,29 @@ function WebsiteContentPageContent() {
                               <option value="community">Community</option>
                             </select>
                           </div>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => {
-                              const newFeatures = currentFeatures.filter((_, i) => i !== index);
-                              updateContent(['whyChooseUs', 'features'], newFeatures.length > 0 ? newFeatures : defaultWhyChooseUsContent.features);
-                            }}
-                            className="mt-6"
-                          >
-                            Remove Feature
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                // Values are already kept in sync as you type,
+                                // this button is provided for clarity in the UI.
+                                updateContent(['whyChooseUs', 'features'], [...currentFeatures]);
+                              }}
+                            >
+                              Update Feature
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => {
+                                const newFeatures = currentFeatures.filter((_, i) => i !== index);
+                                updateContent(['whyChooseUs', 'features'], newFeatures.length > 0 ? newFeatures : defaultWhyChooseUsContent.features);
+                              }}
+                            >
+                              Delete Feature
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </Card>
