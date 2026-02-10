@@ -1976,6 +1976,23 @@ function WebsiteContentPageContent() {
                       {content.hero?.carousel?.items?.map((item, index) => (
                         <Card key={item.id} className="p-4">
                           <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-semibold text-gray-700">
+                                Carousel Item {index + 1}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                                title="Delete this item"
+                                onClick={() => {
+                                  const newItems = content.hero?.carousel?.items?.filter((_, i) => i !== index) || [];
+                                  updateContent(['hero', 'carousel', 'items'], newItems);
+                                }}
+                              >
+                                <Trash className="w-4 h-4" />
+                              </Button>
+                            </div>
                             <AttractiveInput
                               value={item.image}
                               onChange={(e) => {
@@ -2003,16 +2020,28 @@ function WebsiteContentPageContent() {
                               }}
                               placeholder="Category"
                             />
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => {
-                                const newItems = content.hero?.carousel?.items?.filter((_, i) => i !== index) || [];
-                                updateContent(['hero', 'carousel', 'items'], newItems);
-                              }}
-                            >
-                              Remove
-                            </Button>
+                            <div className="flex gap-2 justify-end">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  const newItems = [...(content.hero?.carousel?.items || [])];
+                                  updateContent(['hero', 'carousel', 'items'], newItems);
+                                }}
+                              >
+                                Update Item
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => {
+                                  const newItems = content.hero?.carousel?.items?.filter((_, i) => i !== index) || [];
+                                  updateContent(['hero', 'carousel', 'items'], newItems);
+                                }}
+                              >
+                                Delete Item
+                              </Button>
+                            </div>
                           </div>
                         </Card>
                       ))}
