@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Sans_Bengali } from "next/font/google";
 import "./globals.css";
+import "plyr/dist/plyr.css";
 import Providers from "@/components/Providers";
 const geistSans = Geist({
   variable: "--font-geist-sans",

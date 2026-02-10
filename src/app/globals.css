@@ -43,6 +43,10 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+.ytp-pause-overlay {
+  display: none !important;
+}
+
 /* Admin Sidebar Scrollbar Styling */
 .admin-sidebar-content {
   scrollbar-width: thin;

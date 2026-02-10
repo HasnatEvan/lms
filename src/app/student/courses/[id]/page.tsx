@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Collapsible, CollapsibleContent, CollapsibleHeader } from '@/components/ui/collapsible';
 import confetti from 'canvas-confetti';
+// @ts-ignore plyr ships a default export at runtime
+import Plyr from 'plyr';
 
 export default function StudentCourseLearningPage() {
   const { data: session, status } = useSession();
@@ -45,6 +47,9 @@ export default function StudentCourseLearningPage() {
   const [hasQuiz, setHasQuiz] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [openChapterId, setOpenChapterId] = useState<string | null>(null);
+
+  const playerInstanceRef = useRef<any | null>(null);
+  const videoContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -131,7 +136,59 @@ export default function StudentCourseLearningPage() {
     }
   }, [courseId, loading]);
 
-  // Cleanup Plyr instance on component unmount
+  // Initialize / cleanup Plyr player when lesson video changes or video is hidden
+  useEffect(() => {
+    if (!selectedLesson?.youtubeVideoId || hideVideo) {
+      if (playerInstanceRef.current) {
+        playerInstanceRef.current.destroy();
+        playerInstanceRef.current = null;
+      }
+      return;
+    }
+
+    const container = videoContainerRef.current;
+    if (!container) return;
+
+    // Reset container content before initializing a new instance
+    container.innerHTML = '';
+
+    // Use Plyr's recommended YouTube embed via data attributes, which avoids the native YouTube title bar UI
+    const wrapper = document.createElement('div');
+    wrapper.id = 'plyr-player';
+    wrapper.setAttribute('data-plyr-provider', 'youtube');
+    wrapper.setAttribute('data-plyr-embed-id', selectedLesson.youtubeVideoId);
+    container.appendChild(wrapper);
+
+    const player = new Plyr('#plyr-player', {
+      controls: [
+        'play-large',
+        'play',
+        'progress',
+        'current-time',
+        'mute',
+        'volume',
+        'settings',
+        'pip',
+        'airplay',
+        'fullscreen',
+      ],
+      youtube: {
+        rel: 0,
+        showinfo: 0,
+        iv_load_policy: 3,
+        modestbranding: 1,
+      },
+    });
+
+    playerInstanceRef.current = player;
+
+    return () => {
+      if (playerInstanceRef.current) {
+        playerInstanceRef.current.destroy();
+        playerInstanceRef.current = null;
+      }
+    };
+  }, [selectedLesson?.youtubeVideoId, hideVideo]);
 
   // Check if quiz exists for the lesson
   const checkQuizAvailability = async (lessonId: string) => {
@@ -615,19 +672,7 @@ export default function StudentCourseLearningPage() {
               {!hideVideo && (
                 <div className="w-full aspect-video bg-black rounded-lg sm:rounded-xl overflow-hidden shadow-md sm:shadow-lg border border-gray-200">
                   {selectedLesson?.youtubeVideoId ? (
-                   
-                    <div className="relative w-full h-full">
-                      <iframe
-                        src={`https://www.youtube.com/embed/${selectedLesson.youtubeVideoId}?rel=0&showinfo=0&iv_load_policy=3&modestbranding=1&controls=1`}
-                        title="YouTube video player"
-                        width="100%"
-                        height="100%"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowFullScreen
-                        className="absolute top-0 left-0 w-full h-full"
-                      ></iframe>
-                    </div>
+                    <div ref={videoContainerRef} className="relative w-full h-full" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-white text-sm sm:text-base">No video</div>
                   )}
