@@ -38,6 +38,38 @@ export const uploadAvatar = async (file: Buffer, userId: string): Promise<{ secu
   });
 };
 
+// Utility function to upload branding assets (logo, favicon)
+export const uploadBrandAsset = async (
+  file: Buffer,
+  assetType: 'logo' | 'favicon',
+  userId: string
+): Promise<{ secure_url: string; public_id: string }> => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload_stream(
+      {
+        folder: 'lms/branding',
+        public_id: `${assetType}_${userId}_${Date.now()}`,
+        transformation: [
+          { quality: 'auto', fetch_format: 'auto' }
+        ],
+        resource_type: 'image'
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else if (result) {
+          resolve({
+            secure_url: result.secure_url,
+            public_id: result.public_id
+          });
+        } else {
+          reject(new Error('Upload failed'));
+        }
+      }
+    ).end(file);
+  });
+};
+
 // Utility function to delete avatar
 export const deleteAvatar = async (publicId: string): Promise<boolean> => {
   try {

@@ -55,7 +55,7 @@ export interface FooterContent {
 
 export const defaultFooterContent: FooterContent = {
   branding: {
-    logoText: "CodeZyne",
+    logoText: "Institute",
     logoIcon: "C",
     logoIconColor: "#A855F7",
     logoTextColor: "#A855F7",

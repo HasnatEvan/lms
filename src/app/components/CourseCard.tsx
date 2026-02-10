@@ -45,7 +45,7 @@ export default function CourseCard({
       style={{ animationDelay: delay }}
     >
       {/* Course Image */}
-      <div className="relative h-36 overflow-hidden p-4 md:h-40 lg:h-44">
+      <div className="relative h-44 overflow-hidden p-4 md:h-48 lg:h-52">
         <div className="relative h-full w-full overflow-hidden rounded-2xl">
           <Image
             src={course.image}

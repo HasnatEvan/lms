@@ -10,7 +10,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { LuUser as User, LuMail as Mail, LuCalendar as Calendar, LuBookOpen as BookOpen, LuAward as Award, LuClock as Clock, LuTarget as Target, LuPencil as Edit, LuSave as Save, LuX as X, LuFileText as LuFileText, LuCircle as HelpCircle } from 'react-icons/lu';;
+import Image from 'next/image';
+import { LuUser as User, LuMail as Mail, LuCalendar as Calendar, LuBookOpen as BookOpen, LuAward as Award, LuClock as Clock, LuTarget as Target, LuPencil as Edit, LuSave as Save, LuX as X, LuFileText as LuFileText, LuCircle as HelpCircle, LuUpload as Upload } from 'react-icons/lu';;
+import { useAvatarUpload } from '@/hooks/useAvatarUpload';
 
 interface StudentProfile {
   _id: string;
@@ -38,6 +40,7 @@ export default function StudentProfile() {
     email: '',
     parentPhone: ''
   });
+  const { uploadAvatar, isUploading, uploadProgress } = useAvatarUpload();
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -107,6 +110,30 @@ export default function StudentProfile() {
     }));
   };
 
+  const handleAvatarUpload = async (file: File) => {
+    if (!file || !session?.user?.id) return;
+
+    const result = await uploadAvatar(file);
+    if (!result || !result.success || !result.imageUrl) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/users/${session.user.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatar: result.imageUrl }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProfile(data.user);
+      }
+    } catch (error) {
+      console.error('Error saving avatar to profile:', error);
+    }
+  };
+
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Never';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -145,9 +172,62 @@ export default function StudentProfile() {
           description="Manage your personal information and account settings"
         />
 
-        {/* Profile LuInformation */}
+        {/* Profile Photo */}
+        <PageSection
+          title="Profile Photo"
+          description="Upload or change your profile picture"
+          className="mb-2 sm:mb-4"
+        >
+          <div className="flex items-center gap-4">
+            <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200 bg-gray-100">
+              {profile.avatar ? (
+                <Image
+                  src={profile.avatar}
+                  alt="Profile avatar"
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <User className="w-8 h-8 text-gray-400" />
+                </div>
+              )}
+              {isUploading && (
+                <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-xs text-white">
+                  <div className="mb-1">Uploading...</div>
+                  <div>{uploadProgress}%</div>
+                </div>
+              )}
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm text-gray-700 block">
+                Recommended size up to 5MB (JPEG, PNG, GIF, WebP)
+              </label>
+              <div className="flex items-center gap-2">
+                <label className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                  <Upload className="w-4 h-4" />
+                  <span>{isUploading ? 'Uploading...' : 'Upload Photo'}</span>
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                    className="hidden"
+                    disabled={isUploading}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        handleAvatarUpload(file);
+                      }
+                    }}
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+        </PageSection>
+
+        {/* Profile Information */}
         <PageSection 
-          title="Personal LuInformation"
+          title="Personal Information"
           description="Update your personal details and contact information"
           className="mb-2 sm:mb-4"
           actions={

@@ -83,6 +83,7 @@ import { defaultFAQContent } from '@/constants/faqContent';
 import { defaultPromoBannerContent } from '@/constants/promoBannerContent';
 
 interface WebsiteContent {
+  metaTitle?: string;
   marquee: {
     enabled: boolean;
     messages: string[];
@@ -105,6 +106,8 @@ interface WebsiteContent {
     logoTextColor2: string;
     logoIconColor1: string;
     logoIconColor2: string;
+    logoUrl?: string;
+    faviconUrl?: string;
   };
   navigation: {
     home: {
@@ -764,6 +767,7 @@ function WebsiteContentPageContent() {
   const [activeTab, setActiveTab] = useState('hero');
   const [editingMessageIndex, setEditingMessageIndex] = useState<number | null>(null);
   const [editingNavItem, setEditingNavItem] = useState<{ section: string; index: number } | null>(null);
+  const [uploadingAsset, setUploadingAsset] = useState<'logo' | 'favicon' | null>(null);
   
   // Reviews management state
   const [reviews, setReviews] = useState<any[]>([]);
@@ -1104,6 +1108,20 @@ function WebsiteContentPageContent() {
           registrationNumber: fetchedContent.contact?.registrationNumber || 'বাংলাদেশ সরকার অনুমোদিত রেজিঃ নং- ৩১১০৫'
         };
       }
+      // Ensure meta title and branding defaults exist
+      if (!fetchedContent.metaTitle) {
+        fetchedContent.metaTitle = 'CodeZyne - Online Learning Platform';
+      }
+      fetchedContent.branding = {
+        logoText: 'Institute',
+        logoTextColor1: '#7B2CBF',
+        logoTextColor2: '#FF6B35',
+        logoIconColor1: '#FF6B35',
+        logoIconColor2: '#7B2CBF',
+        logoUrl: '',
+        faviconUrl: '',
+        ...(fetchedContent.branding || {}),
+      };
       // Ensure promotional banner has defaults
       if (!fetchedContent.promotionalBanner || fetchedContent.promotionalBanner.headline === undefined) {
         fetchedContent.promotionalBanner = { ...defaultPromoBannerContent, ...(fetchedContent.promotionalBanner || {}) };
@@ -1114,6 +1132,16 @@ function WebsiteContentPageContent() {
       setSaveStatus('error');
       // Initialize with default content on error
       setContent({ 
+        metaTitle: 'CodeZyne - Online Learning Platform',
+        branding: {
+          logoText: 'Institute',
+          logoTextColor1: '#7B2CBF',
+          logoTextColor2: '#FF6B35',
+          logoIconColor1: '#FF6B35',
+          logoIconColor2: '#7B2CBF',
+          logoUrl: '',
+          faviconUrl: '',
+        },
         hero: defaultHeroContent,
         about: defaultAboutContent,
         whyChooseUs: defaultWhyChooseUsContent,
@@ -1323,6 +1351,36 @@ function WebsiteContentPageContent() {
     
     current[path[path.length - 1]] = value;
     setContent(newContent);
+  };
+
+  const handleBrandingUpload = async (event: any, assetType: 'logo' | 'favicon') => {
+    const file = event.target.files?.[0];
+    if (!file || !content) return;
+
+    try {
+      setUploadingAsset(assetType);
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('assetType', assetType);
+
+      const response = await fetch('/api/upload/branding', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data?.imageUrl) {
+        throw new Error(data?.error || `Failed to upload ${assetType}`);
+      }
+
+      updateContent(['branding', assetType === 'logo' ? 'logoUrl' : 'faviconUrl'], data.imageUrl);
+    } catch (error) {
+      console.error(`Error uploading ${assetType}:`, error);
+      alert(error instanceof Error ? error.message : `Failed to upload ${assetType}`);
+    } finally {
+      setUploadingAsset(null);
+      event.target.value = '';
+    }
   };
 
   const addMarqueeMessage = () => {
@@ -6261,15 +6319,90 @@ function WebsiteContentPageContent() {
                 <Palette className="w-5 h-5" />
                 Branding & Logo
               </CardTitle>
-              <CardDescription>Customize logo text and colors</CardDescription>
+              <CardDescription>Customize logo, favicon, meta title and brand colors</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              <div>
+                <label className="text-sm font-semibold mb-2 block">Website Meta Title</label>
+                <Input
+                  value={content.metaTitle || ''}
+                  onChange={(e) => updateContent(['metaTitle'], e.target.value)}
+                  placeholder="Your institute website title"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="space-y-3">
+                  <label className="text-sm font-semibold block">Institute Logo</label>
+                  {content.branding.logoUrl ? (
+                    <img
+                      src={content.branding.logoUrl}
+                      alt="Institute logo"
+                      className="h-16 w-16 rounded border object-contain bg-white"
+                    />
+                  ) : (
+                    <div className="h-16 w-16 rounded border bg-gray-50 flex items-center justify-center text-xs text-gray-500">
+                      No logo
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="file"
+                      accept="image/*,.ico"
+                      onChange={(e) => handleBrandingUpload(e, 'logo')}
+                      disabled={uploadingAsset === 'logo'}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => updateContent(['branding', 'logoUrl'], '')}
+                      disabled={!content.branding.logoUrl || uploadingAsset === 'logo'}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                  {uploadingAsset === 'logo' && <p className="text-xs text-gray-500">Uploading logo...</p>}
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-sm font-semibold block">Favicon</label>
+                  {content.branding.faviconUrl ? (
+                    <img
+                      src={content.branding.faviconUrl}
+                      alt="Website favicon"
+                      className="h-16 w-16 rounded border object-contain bg-white"
+                    />
+                  ) : (
+                    <div className="h-16 w-16 rounded border bg-gray-50 flex items-center justify-center text-xs text-gray-500">
+                      No favicon
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="file"
+                      accept="image/*,.ico"
+                      onChange={(e) => handleBrandingUpload(e, 'favicon')}
+                      disabled={uploadingAsset === 'favicon'}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => updateContent(['branding', 'faviconUrl'], '')}
+                      disabled={!content.branding.faviconUrl || uploadingAsset === 'favicon'}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                  {uploadingAsset === 'favicon' && <p className="text-xs text-gray-500">Uploading favicon...</p>}
+                </div>
+              </div>
+
               <div>
                 <label className="text-sm font-semibold mb-2 block">Logo Text</label>
                 <Input
                   value={content.branding.logoText}
                   onChange={(e) => updateContent(['branding', 'logoText'], e.target.value)}
-                  placeholder="CodeZyne"
+                  placeholder="Institute"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">

@@ -25,6 +25,11 @@ const StudentSidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { user, isLoading } = useAppSelector((state) => state.auth);
+  const [branding, setBranding] = useState({
+    logoText: 'Institute',
+    logoTextColor1: '#ffffff',
+    logoUrl: '',
+  });
   
   // State for dynamic badges
   const [examBadges, setExamBadges] = useState({
@@ -64,6 +69,29 @@ const StudentSidebar = () => {
       fetchExamBadges();
     }
   }, [user]);
+
+  useEffect(() => {
+    const fetchBranding = async () => {
+      try {
+        const response = await fetch('/api/website-content', { cache: 'no-store' });
+        if (!response.ok) return;
+        const data = await response.json();
+        const apiBranding = data?.data?.branding;
+        if (!apiBranding) return;
+
+        setBranding((prev) => ({
+          ...prev,
+          logoText: apiBranding.logoText || prev.logoText,
+          logoTextColor1: apiBranding.logoTextColor1 || prev.logoTextColor1,
+          logoUrl: apiBranding.logoUrl || '',
+        }));
+      } catch (error) {
+        console.error('Error fetching branding:', error);
+      }
+    };
+
+    fetchBranding();
+  }, []);
 
   const menuItems = [
     {
@@ -205,6 +233,11 @@ const StudentSidebar = () => {
   };
 
   const getUserDisplayName = () => {
+    const typedUser = user as any;
+    const fullName = [typedUser?.firstName, typedUser?.lastName].filter(Boolean).join(' ').trim();
+    if (fullName) {
+      return fullName;
+    }
     if (user?.name) {
       return user.name;
     }
@@ -219,26 +252,25 @@ const StudentSidebar = () => {
     >
 
       <SidebarHeader className="bg-gray-900 border-b border-gray-700 rounded-b-2xl transition-all duration-300">
-        <div className="flex items-center gap-3 px-4 py-4">
-          {user?.image ? (
-            <img
-              src={user.image}
-              alt={getUserDisplayName()}
-              className="size-10 rounded-lg object-cover flex-shrink-0"
-            />
-          ) : (
-            <div className="flex aspect-square size-10 items-center justify-center rounded-lg bg-green-600 text-white text-sm font-bold flex-shrink-0">
-              {user ? getUserInitials(getUserDisplayName()) : 'S'}
-            </div>
-          )}
-          <div className="grid flex-1 text-left min-w-0">
-            <span className="truncate font-bold text-lg text-white">
-              {user ? getUserDisplayName() : 'Student'}
-            </span>
-            <span className="truncate text-sm text-gray-300 hidden sm:block">
-              Student
+        <div className="px-4 py-4 space-y-3">
+          <div className="flex items-center gap-2">
+            {branding.logoUrl ? (
+              <img
+                src={branding.logoUrl}
+                alt={branding.logoText || 'Institute logo'}
+                className="h-9 w-9 rounded object-contain bg-white"
+              />
+            ) : (
+              <div className="h-9 w-9 rounded bg-green-700 flex items-center justify-center text-sm font-bold text-white">
+                {branding.logoText?.charAt(0) || 'I'}
+              </div>
+            )}
+            <span className="truncate font-semibold text-base" style={{ color: branding.logoTextColor1 }}>
+              {branding.logoText || 'Institute'}
             </span>
           </div>
+
+
         </div>
       </SidebarHeader>
       

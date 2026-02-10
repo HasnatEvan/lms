@@ -21,6 +21,7 @@ import { defaultPromoBannerContent } from '@/constants/promoBannerContent';
 import { revalidatePath, revalidateTag } from 'next/cache';
 
 interface WebsiteContentSettings {
+  metaTitle?: string;
   marquee: {
     enabled: boolean;
     messages: string[];
@@ -43,6 +44,8 @@ interface WebsiteContentSettings {
     logoTextColor2: string;
     logoIconColor1: string;
     logoIconColor2: string;
+    logoUrl?: string;
+    faviconUrl?: string;
   };
   navigation: {
     home: {
@@ -520,6 +523,7 @@ interface WebsiteContentSettings {
 }
 
 const defaultWebsiteContent: WebsiteContentSettings = {
+  metaTitle: "CodeZyne - Online Learning Platform",
   marquee: {
     enabled: true,
     messages: [
@@ -540,11 +544,13 @@ const defaultWebsiteContent: WebsiteContentSettings = {
     linkedin: "#",
   },
   branding: {
-    logoText: "CodeZyne",
+    logoText: "Institute",
     logoTextColor1: "#7B2CBF",
     logoTextColor2: "#FF6B35",
     logoIconColor1: "#FF6B35",
     logoIconColor2: "#7B2CBF",
+    logoUrl: "",
+    faviconUrl: "",
   },
   navigation: {
     home: {
@@ -804,6 +810,10 @@ function validateWebsiteContent(settings: any): { isValid: boolean; error?: stri
     }
   }
 
+  if (settings.metaTitle !== undefined && typeof settings.metaTitle !== 'string') {
+    return { isValid: false, error: 'Meta title must be a string' };
+  }
+
   // Validate navigation structure
   if (settings.navigation) {
     const navSections = ['home', 'category', 'pages', 'courses', 'account', 'contact'];
@@ -813,6 +823,16 @@ function validateWebsiteContent(settings: any): { isValid: boolean; error?: stri
           return { isValid: false, error: `${section} navigation items must be an array` };
         }
       }
+    }
+  }
+
+  // Validate branding
+  if (settings.branding) {
+    if (settings.branding.logoUrl !== undefined && typeof settings.branding.logoUrl !== 'string') {
+      return { isValid: false, error: 'Branding logoUrl must be a string' };
+    }
+    if (settings.branding.faviconUrl !== undefined && typeof settings.branding.faviconUrl !== 'string') {
+      return { isValid: false, error: 'Branding faviconUrl must be a string' };
     }
   }
 

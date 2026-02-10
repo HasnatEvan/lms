@@ -1,11 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Login() {
+  const [branding, setBranding] = useState({
+    logoText: "Institute",
+    logoTextColor1: "#7B2CBF",
+    logoUrl: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    const fetchBranding = async () => {
+      try {
+        const response = await fetch("/api/website-content", { cache: "no-store" });
+        if (!response.ok) return;
+        const data = await response.json();
+        const apiBranding = data?.data?.branding;
+        if (!apiBranding) return;
+
+        setBranding((prev) => ({
+          ...prev,
+          logoText: apiBranding.logoText || prev.logoText,
+          logoTextColor1: apiBranding.logoTextColor1 || prev.logoTextColor1,
+          logoUrl: apiBranding.logoUrl || "",
+        }));
+      } catch (err) {
+        console.error("Failed to fetch branding:", err);
+      }
+    };
+
+    fetchBranding();
+  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -61,26 +89,31 @@ export default function Login() {
           <div className="rounded-2xl bg-white p-8 shadow-2xl md:p-10">
             {/* Logo */}
             <div className="mb-6 flex items-center justify-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center">
-                <svg
-                  width="36"
-                  height="36"
-                  viewBox="0 0 36 36"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  {/* Orange head */}
-                  <circle cx="18" cy="11" r="7" fill="#FF6B35" />
-                  {/* Purple body */}
-                  <path
-                    d="M11 25C11 21.5 13.5 18.5 18 18.5C22.5 18.5 25 21.5 25 25V29H11V25Z"
-                    fill="#7B2CBF"
-                  />
-                </svg>
-              </div>
-              <span className="text-2xl font-bold tracking-tight">
-                <span className="text-[#7B2CBF]">Code</span>
-                <span className="text-[#FF6B35]">Zyne</span>
+              {branding.logoUrl ? (
+                <img
+                  src={branding.logoUrl}
+                  alt={branding.logoText || "Institute logo"}
+                  className="h-10 w-10 rounded object-contain"
+                />
+              ) : (
+                <div className="flex h-9 w-9 items-center justify-center">
+                  <svg
+                    width="36"
+                    height="36"
+                    viewBox="0 0 36 36"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <circle cx="18" cy="11" r="7" fill="#FF6B35" />
+                    <path
+                      d="M11 25C11 21.5 13.5 18.5 18 18.5C22.5 18.5 25 21.5 25 25V29H11V25Z"
+                      fill="#7B2CBF"
+                    />
+                  </svg>
+                </div>
+              )}
+              <span className="text-xl font-bold tracking-tight" style={{ color: branding.logoTextColor1 }}>
+                {branding.logoText}
               </span>
             </div>
 
@@ -89,7 +122,7 @@ export default function Login() {
               className="mb-8 text-center text-sm text-gray-600"
               style={{ fontFamily: "var(--font-bengali), sans-serif" }}
             >
-              আপনার CodeZyne অ্যাকাউন্ট দিয়ে লগ ইন করুন
+              আপনার অ্যাকাউন্ট দিয়ে লগ ইন করুন
             </p>
 
             {/* Login Form */}

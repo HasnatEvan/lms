@@ -2,7 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { LuEye as Eye, LuEyeOff as EyeOff, LuPhone as Phone, LuLock as Lock, LuGraduationCap as GraduationCap, LuArrowRight as ArrowRight, LuCheck as CheckCircle, LuUser as User, LuUsers as Users, LuShield as Shield } from 'react-icons/lu';
+import {
+  LuEye as Eye,
+  LuEyeOff as EyeOff,
+  LuPhone as Phone,
+  LuLock as Lock,
+  LuGraduationCap as GraduationCap,
+  LuArrowRight as ArrowRight,
+} from 'react-icons/lu';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,10 +20,16 @@ import { loginUser, clearError } from '@/lib/slices/authSlice';
 // import DebugAuth from '@/components/DebugAuth';
 
 export default function LoginPage() {
+  const [branding, setBranding] = useState({
+    logoText: 'Institute',
+    logoTextColor1: '#7B2CBF',
+    logoTextColor2: '#FF6B35',
+    logoUrl: '',
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [phone, setPhone] = useState('01700000000');
-  const [password, setPassword] = useState('admin123');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
   
   const dispatch = useAppDispatch();
   const { isLoading, error, isAuthenticated, user } = useAppSelector((state: any) => state.auth);
@@ -26,6 +39,30 @@ export default function LoginPage() {
     // Clear error when component mounts
     dispatch(clearError());
   }, [dispatch]);
+
+  useEffect(() => {
+    const fetchBranding = async () => {
+      try {
+        const response = await fetch('/api/website-content', { cache: 'no-store' });
+        if (!response.ok) return;
+        const data = await response.json();
+        const apiBranding = data?.data?.branding;
+        if (!apiBranding) return;
+
+        setBranding((prev) => ({
+          ...prev,
+          logoText: apiBranding.logoText || prev.logoText,
+          logoTextColor1: apiBranding.logoTextColor1 || prev.logoTextColor1,
+          logoTextColor2: apiBranding.logoTextColor2 || prev.logoTextColor2,
+          logoUrl: apiBranding.logoUrl || '',
+        }));
+      } catch (err) {
+        console.error('Failed to fetch branding:', err);
+      }
+    };
+
+    fetchBranding();
+  }, []);
 
   // Handle successful login redirect
   useEffect(() => {
@@ -52,26 +89,6 @@ export default function LoginPage() {
     if (!phone || !password) return;
     
     dispatch(loginUser({ phone, password }));
-  };
-
-  const handleQuickLogin = (role: 'admin' | 'teacher' | 'student') => {
-    let credentials = { phone: '', password: '' };
-    
-    switch (role) {
-      case 'admin':
-        credentials = { phone: '01700000000', password: 'admin123' };
-        break;
-      case 'teacher':
-        credentials = { phone: '01700000001', password: 'teacher123' };
-        break;
-      case 'student':
-        credentials = { phone: '01700000009', password: 'student123' };
-        break;
-    }
-    
-    setPhone(credentials.phone);
-    setPassword(credentials.password);
-    dispatch(loginUser(credentials));
   };
 
   return (
@@ -114,15 +131,27 @@ export default function LoginPage() {
       <div className="relative z-10 w-full max-w-md">
         {/* Logo and Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl shadow-lg mb-4" style={{
-            background: "linear-gradient(135deg, #EC4899 0%, #A855F7 100%)",
-            boxShadow: "0 4px 15px rgba(236, 72, 153, 0.3)",
-          }}>
-            <GraduationCap className="w-8 h-8 text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 mb-4">
+            {branding.logoUrl ? (
+              <img
+                src={branding.logoUrl}
+                alt={branding.logoText || 'Institute logo'}
+                className="h-16 w-16 rounded-2xl object-contain shadow-lg"
+              />
+            ) : (
+              <div
+                className="inline-flex items-center justify-center w-16 h-16 rounded-2xl shadow-lg"
+                style={{
+                  background: "linear-gradient(135deg, #EC4899 0%, #A855F7 100%)",
+                  boxShadow: "0 4px 15px rgba(236, 72, 153, 0.3)",
+                }}
+              >
+                <GraduationCap className="w-8 h-8 text-white" />
+              </div>
+            )}
           </div>
-          <h1 className="text-3xl font-bold mb-2">
-            <span style={{ color: '#7B2CBF' }}>Code</span>
-            <span style={{ color: '#FF6B35' }}>Zyne</span>
+          <h1 className="text-2xl font-bold mb-2" style={{ color: branding.logoTextColor1 }}>
+            {branding.logoText}
           </h1>
           <p className="text-gray-600">Welcome back to your learning journey</p>
         </div>
@@ -254,95 +283,6 @@ export default function LoginPage() {
                 )}
               </Button>
             </form>
-
-            {/* Quick Login Section */}
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-500">Quick Login for Testing</span>
-                </div>
-              </div>
-              
-              <div className="mt-4 grid grid-cols-1 gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => handleQuickLogin('admin')}
-                  disabled={isLoading}
-                  className="h-11 border-gray-200 transition-all duration-200"
-                  style={{
-                    borderColor: '#e5e7eb',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(236, 72, 153, 0.1)';
-                    e.currentTarget.style.borderColor = '#EC4899';
-                    e.currentTarget.style.color = '#EC4899';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.borderColor = '#e5e7eb';
-                    e.currentTarget.style.color = '';
-                  }}
-                >
-                  <Shield className="w-4 h-4 mr-2" />
-                  <span className="flex-1">Login as Admin</span>
-                  <span className="text-xs text-gray-500 ml-2">01700000000</span>
-                </Button>
-                
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => handleQuickLogin('teacher')}
-                  disabled={isLoading}
-                  className="h-11 border-gray-200 transition-all duration-200"
-                  style={{
-                    borderColor: '#e5e7eb',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(168, 85, 247, 0.1)';
-                    e.currentTarget.style.borderColor = '#A855F7';
-                    e.currentTarget.style.color = '#A855F7';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.borderColor = '#e5e7eb';
-                    e.currentTarget.style.color = '';
-                  }}
-                >
-                  <GraduationCap className="w-4 h-4 mr-2" />
-                  <span className="flex-1">Login as Teacher</span>
-                  <span className="text-xs text-gray-500 ml-2">01700000001</span>
-                </Button>
-                
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => handleQuickLogin('student')}
-                  disabled={isLoading}
-                  className="h-11 border-gray-200 transition-all duration-200"
-                  style={{
-                    borderColor: '#e5e7eb',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(123, 44, 191, 0.1)';
-                    e.currentTarget.style.borderColor = '#7B2CBF';
-                    e.currentTarget.style.color = '#7B2CBF';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.borderColor = '#e5e7eb';
-                    e.currentTarget.style.color = '';
-                  }}
-                >
-                  <User className="w-4 h-4 mr-2" />
-                  <span className="flex-1">Login as Student</span>
-                  <span className="text-xs text-gray-500 ml-2">01700000002</span>
-                </Button>
-              </div>
-            </div>
 
             {/* Divider */}
             {/* <div className="relative my-6">

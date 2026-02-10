@@ -19,6 +19,7 @@ import { defaultFAQContent } from '@/constants/faqContent';
 import { defaultPromoBannerContent } from '@/constants/promoBannerContent';
 
 interface WebsiteContentSettings {
+  metaTitle?: string;
   marquee: {
     enabled: boolean;
     messages: string[];
@@ -41,6 +42,8 @@ interface WebsiteContentSettings {
     logoTextColor2: string;
     logoIconColor1: string;
     logoIconColor2: string;
+    logoUrl?: string;
+    faviconUrl?: string;
   };
   navigation: {
     home: {
@@ -518,6 +521,7 @@ interface WebsiteContentSettings {
 }
 
 const defaultWebsiteContent: WebsiteContentSettings = {
+  metaTitle: "CodeZyne - Online Learning Platform",
   marquee: {
     enabled: true,
     messages: [
@@ -538,11 +542,13 @@ const defaultWebsiteContent: WebsiteContentSettings = {
     linkedin: "#",
   },
   branding: {
-    logoText: "CodeZyne",
+    logoText: "Institute",
     logoTextColor1: "#7B2CBF",
     logoTextColor2: "#FF6B35",
     logoIconColor1: "#FF6B35",
     logoIconColor2: "#7B2CBF",
+    logoUrl: "",
+    faviconUrl: "",
   },
   navigation: {
     home: {

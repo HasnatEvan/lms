@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LuMail as Mail, LuArrowLeft as ArrowLeft, LuCheck as CheckCircle, LuGraduationCap as GraduationCap } from 'react-icons/lu';;
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,34 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [branding, setBranding] = useState({
+    logoText: 'Institute',
+    logoTextColor1: '#7B2CBF',
+    logoUrl: '',
+  });
+
+  useEffect(() => {
+    const fetchBranding = async () => {
+      try {
+        const response = await fetch('/api/website-content', { cache: 'no-store' });
+        if (!response.ok) return;
+        const data = await response.json();
+        const apiBranding = data?.data?.branding;
+        if (!apiBranding) return;
+
+        setBranding((prev) => ({
+          ...prev,
+          logoText: apiBranding.logoText || prev.logoText,
+          logoTextColor1: apiBranding.logoTextColor1 || prev.logoTextColor1,
+          logoUrl: apiBranding.logoUrl || '',
+        }));
+      } catch (error) {
+        console.error('Failed to fetch branding:', error);
+      }
+    };
+
+    fetchBranding();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,18 +148,30 @@ export default function ForgotPasswordPage() {
         </div>
       </div>
 
-      <div className="relative z-10 w-full max-w-md">
+        <div className="relative z-10 w-full max-w-md">
         {/* Logo and Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl shadow-lg mb-4" style={{
-            background: "linear-gradient(135deg, #EC4899 0%, #A855F7 100%)",
-            boxShadow: "0 4px 15px rgba(236, 72, 153, 0.3)",
-          }}>
-            <GraduationCap className="w-8 h-8 text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 mb-4">
+            {branding.logoUrl ? (
+              <img
+                src={branding.logoUrl}
+                alt={branding.logoText || 'Institute logo'}
+                className="h-16 w-16 rounded-2xl object-contain shadow-lg"
+              />
+            ) : (
+              <div
+                className="inline-flex items-center justify-center w-16 h-16 rounded-2xl shadow-lg"
+                style={{
+                  background: "linear-gradient(135deg, #EC4899 0%, #A855F7 100%)",
+                  boxShadow: "0 4px 15px rgba(236, 72, 153, 0.3)",
+                }}
+              >
+                <GraduationCap className="w-8 h-8 text-white" />
+              </div>
+            )}
           </div>
-          <h1 className="text-3xl font-bold mb-2">
-            <span style={{ color: '#7B2CBF' }}>Code</span>
-            <span style={{ color: '#FF6B35' }}>Zyne</span>
+          <h1 className="text-2xl font-bold mb-2" style={{ color: branding.logoTextColor1 }}>
+            {branding.logoText}
           </h1>
           <p className="text-gray-600">Reset your password</p>
         </div>

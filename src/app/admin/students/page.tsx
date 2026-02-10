@@ -183,6 +183,11 @@ function StudentsPageContent() {
                   onChange={(e) => handleSearchChange(e.target.value)}
                   className="pl-10 pr-10 w-full sm:w-64"
                   disabled={loading}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                    }
+                  }}
                 />
                 {search && (
                   <button

@@ -73,7 +73,7 @@ export async function PUT(
       );
     }
 
-    const { firstName, lastName, role, isActive } = await request.json();
+    const { firstName, lastName, role, isActive, avatar } = await request.json();
 
     await connectDB();
 
@@ -82,6 +82,7 @@ export async function PUT(
     if (firstName !== undefined) updateData.firstName = firstName;
     if (lastName !== undefined) updateData.lastName = lastName;
     if (isActive !== undefined) updateData.isActive = isActive;
+    if (avatar !== undefined) updateData.avatar = avatar;
     
     // Only admins can change roles
     if (role !== undefined && session.user.role === 'admin') {

@@ -11,6 +11,7 @@ import Image from "next/image";
 import type { WebsiteContent as WebsiteContentType } from "@/lib/website-content";
 
 interface WebsiteContent {
+  metaTitle?: string;
   marquee: {
     enabled: boolean;
     messages: string[];
@@ -33,6 +34,8 @@ interface WebsiteContent {
     logoTextColor2: string;
     logoIconColor1: string;
     logoIconColor2: string;
+    logoUrl?: string;
+    faviconUrl?: string;
   };
   navigation: {
     home: {
@@ -77,6 +80,7 @@ interface WebsiteContent {
 }
 
 const defaultContent: WebsiteContent = {
+  metaTitle: "CodeZyne - Online Learning Platform",
   marquee: {
     enabled: true,
     messages: [
@@ -97,11 +101,13 @@ const defaultContent: WebsiteContent = {
     linkedin: "#",
   },
   branding: {
-    logoText: "CodeZyne",
+    logoText: "Institute",
     logoTextColor1: "#7B2CBF",
     logoTextColor2: "#FF6B35",
     logoIconColor1: "#FF6B35",
     logoIconColor2: "#7B2CBF",
+    logoUrl: "",
+    faviconUrl: "",
   },
   navigation: {
     home: {
@@ -444,30 +450,18 @@ export default function Header({ initialContent }: HeaderProps = {}) {
       <div className="mx-auto flex max-w-7xl items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-          <div className="flex h-9 w-9 items-center justify-center">
-            <svg
-              width="36"
-              height="36"
-              viewBox="0 0 36 36"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {/* Orange head */}
-              <circle cx="18" cy="11" r="7" fill={content.branding.logoIconColor1} />
-              {/* Purple body */}
-              <path
-                d="M11 25C11 21.5 13.5 18.5 18 18.5C22.5 18.5 25 21.5 25 25V29H11V25Z"
-                fill={content.branding.logoIconColor2}
-              />
-            </svg>
-          </div>
-          <span className="text-xl font-bold tracking-tight md:text-2xl">
-            <span style={{ color: content.branding.logoTextColor1 }}>
-              {content.branding.logoText.split('').slice(0, Math.ceil(content.branding.logoText.length / 2)).join('')}
-            </span>
-            <span style={{ color: content.branding.logoTextColor2 }}>
-              {content.branding.logoText.split('').slice(Math.ceil(content.branding.logoText.length / 2)).join('')}
-            </span>
+          {content.branding.logoUrl?.trim() && (
+            <img
+              src={content.branding.logoUrl}
+              alt={content.branding.logoText || 'Institute logo'}
+              className="h-14 w-14 rounded object-contain"
+            />
+          )}
+          <span
+            className="text-lg font-bold tracking-tight md:text-xl"
+            style={{ color: content.branding.logoTextColor1 }}
+          >
+            {content.branding.logoText || 'Institute'}
           </span>
         </Link>
 

@@ -33,7 +33,7 @@ interface StudentSettings {
 
 function StudentSettingsPageContent() {
   const { user } = useAppSelector((state) => state.auth);
-  const [activeTab, setActiveTab] = useState('general');
+  const [activeTab, setActiveTab] = useState('profile');
   const [hasChanges, setHasChanges] = useState(false);
   
   // Password change state
@@ -59,7 +59,6 @@ function StudentSettingsPageContent() {
   } = useStudentSettings();
 
   const tabs = [
-    { id: 'general', label: 'General', icon: Settings },
     { id: 'profile', label: 'Profile', icon: User },
     // { id: 'notifications', label: 'Notifications', icon: LuBell },
     { id: 'password', label: 'Password', icon: LuKey },
@@ -168,8 +167,9 @@ function StudentSettingsPageContent() {
         setPasswordErrors({});
         alert('Password changed successfully!');
       } else {
-        const error = await response.json();
-        setPasswordErrors({ currentPassword: error.message || 'Failed to change password' });
+        const errorBody = await response.json().catch(() => ({}));
+        const message = errorBody.error || errorBody.message || 'Failed to change password';
+        setPasswordErrors({ currentPassword: message });
       }
     } catch (error) {
       console.error('Error changing password:', error);
@@ -500,8 +500,6 @@ function StudentSettingsPageContent() {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'general':
-        return renderGeneralSettings();
       case 'profile':
         return renderProfileSettings();
       case 'notifications':
@@ -511,7 +509,7 @@ function StudentSettingsPageContent() {
       case 'email':
         return renderEmailSettings();
       default:
-        return renderGeneralSettings();
+        return renderProfileSettings();
     }
   };
 

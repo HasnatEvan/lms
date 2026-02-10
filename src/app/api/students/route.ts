@@ -27,11 +27,26 @@ export async function GET(request: NextRequest) {
     const query: any = { role: 'student' };
     
     if (search) {
+      // Escape regex special characters to avoid unintended patterns
+      const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const nameRegex = new RegExp(escaped, 'i');
+
       query.$or = [
-        { firstName: { $regex: search, $options: 'i' } },
-        { lastName: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
-        { phone: { $regex: search, $options: 'i' } },
+        // First name, last name, email, phone (case-insensitive)
+        { firstName: { $regex: nameRegex } },
+        { lastName: { $regex: nameRegex } },
+        { email: { $regex: nameRegex } },
+        { phone: { $regex: nameRegex } },
+        // Full name: "FirstName LastName" (case-insensitive)
+        {
+          $expr: {
+            $regexMatch: {
+              input: { $concat: ['$firstName', ' ', '$lastName'] },
+              regex: escaped,
+              options: 'i',
+            },
+          },
+        },
       ];
     }
 

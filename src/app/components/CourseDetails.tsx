@@ -155,8 +155,8 @@ export default function CourseDetails({
   const [enrollmentError, setEnrollmentError] = useState<string | null>(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [loginPhone, setLoginPhone] = useState("01700000009");
-  const [loginPassword, setLoginPassword] = useState("student123");
+  const [loginPhone, setLoginPhone] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
   const [loginSubmitting, setLoginSubmitting] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [pendingEnrollment, setPendingEnrollment] = useState(false);
@@ -757,19 +757,11 @@ export default function CourseDetails({
         <DialogHeader>
           <DialogTitle>Login required to enroll</DialogTitle>
           <DialogDescription>
-            To enroll in this course, please login first. You can use the demo student credentials below.
+            To enroll in this course, please login first.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-            <div className="font-semibold">Demo student</div>
-            <div className="mt-1 grid grid-cols-1 gap-1">
-              <div><span className="font-medium">Phone:</span> 01700000009</div>
-              <div><span className="font-medium">Password:</span> student123</div>
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-gray-700" htmlFor="demo-login-phone">
@@ -807,17 +799,6 @@ export default function CourseDetails({
           )}
 
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
-            <button
-              type="button"
-              onClick={() => {
-                setLoginPhone("01700000009");
-                setLoginPassword("student123");
-              }}
-              className="h-11 rounded-md border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
-              disabled={loginSubmitting}
-            >
-              Use demo credentials
-            </button>
             <button
               type="button"
               onClick={handleLoginAndContinue}

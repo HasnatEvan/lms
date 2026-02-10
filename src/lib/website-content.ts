@@ -15,6 +15,7 @@ import { defaultCoursesContent, CoursesContent } from '@/constants/coursesConten
 import { defaultCoursesByCategoryContent, CoursesByCategoryContent } from '@/constants/coursesByCategoryContent';
 
 export interface WebsiteContent {
+  metaTitle?: string;
   marquee: {
     enabled: boolean;
     messages: string[];
@@ -37,6 +38,8 @@ export interface WebsiteContent {
     logoTextColor2: string;
     logoIconColor1: string;
     logoIconColor2: string;
+    logoUrl?: string;
+    faviconUrl?: string;
   };
   navigation: {
     home: {
@@ -93,6 +96,7 @@ export interface WebsiteContent {
 }
 
 const defaultWebsiteContent: WebsiteContent = {
+  metaTitle: "CodeZyne - Online Learning Platform",
   marquee: {
     enabled: true,
     messages: [
@@ -113,11 +117,13 @@ const defaultWebsiteContent: WebsiteContent = {
     linkedin: "#",
   },
   branding: {
-    logoText: "CodeZyne",
+    logoText: "Institute",
     logoTextColor1: "#7B2CBF",
     logoTextColor2: "#FF6B35",
     logoIconColor1: "#FF6B35",
     logoIconColor2: "#7B2CBF",
+    logoUrl: "",
+    faviconUrl: "",
   },
   navigation: {
     home: {
