@@ -2706,6 +2706,23 @@ function WebsiteContentPageContent() {
                   return (
                     <Card key={item.id || index} className="p-4">
                       <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-semibold text-gray-700">
+                            Statistics Item {index + 1}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                            title="Delete this item"
+                            onClick={() => {
+                              const newItems = currentItems.filter((_, i) => i !== index);
+                              updateContent(['statistics', 'items'], newItems.length > 0 ? newItems : defaultStatisticsContent.items);
+                            }}
+                          >
+                            <Trash className="w-4 h-4" />
+                          </Button>
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <AttractiveInput
                             value={item.number}
@@ -2748,8 +2765,8 @@ function WebsiteContentPageContent() {
                             placeholder="Label (Bengali)"
                           />
                         </div>
-                        <div className="flex items-center gap-4">
-                          <div className="flex-1">
+                        <div className="flex flex-wrap items-end justify-between gap-4">
+                          <div className="flex-1 min-w-[180px]">
                             <label className="text-xs text-gray-600 mb-1 block">Icon Type</label>
                             <select
                               value={item.iconType}
@@ -2766,17 +2783,27 @@ function WebsiteContentPageContent() {
                               <option value="awards">Awards</option>
                             </select>
                           </div>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => {
-                              const newItems = currentItems.filter((_, i) => i !== index);
-                              updateContent(['statistics', 'items'], newItems.length > 0 ? newItems : defaultStatisticsContent.items);
-                            }}
-                            className="mt-6"
-                          >
-                            Remove Item
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                updateContent(['statistics', 'items'], [...currentItems]);
+                              }}
+                            >
+                              Update Item
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => {
+                                const newItems = currentItems.filter((_, i) => i !== index);
+                                updateContent(['statistics', 'items'], newItems.length > 0 ? newItems : defaultStatisticsContent.items);
+                              }}
+                            >
+                              Delete Item
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </Card>
@@ -2982,6 +3009,23 @@ function WebsiteContentPageContent() {
                   return (
                     <Card key={service.id || index} className="p-4">
                       <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-semibold text-gray-700">
+                            Service {index + 1}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                            title="Delete this service"
+                            onClick={() => {
+                              const newServices = currentServices.filter((_, i) => i !== index);
+                              updateContent(['services', 'services'], newServices.length > 0 ? newServices : defaultServicesContent.services);
+                            }}
+                          >
+                            <Trash className="w-4 h-4" />
+                          </Button>
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <AttractiveInput
                             value={service.title}
@@ -3015,8 +3059,8 @@ function WebsiteContentPageContent() {
                           rows={3}
                           className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[#7B2CBF] focus:outline-none focus:ring-2 focus:ring-[#7B2CBF]/20"
                         />
-                        <div className="flex items-center gap-4">
-                          <div className="flex-1">
+                        <div className="flex flex-wrap items-end justify-between gap-4">
+                          <div className="flex-1 min-w-[180px]">
                             <label className="text-xs text-gray-600 mb-1 block">Icon Type</label>
                             <select
                               value={service.iconType}
@@ -3035,17 +3079,27 @@ function WebsiteContentPageContent() {
                               <option value="lifetime-access">Lifetime Access</option>
                             </select>
                           </div>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => {
-                              const newServices = currentServices.filter((_, i) => i !== index);
-                              updateContent(['services', 'services'], newServices.length > 0 ? newServices : defaultServicesContent.services);
-                            }}
-                            className="mt-6"
-                          >
-                            Remove Service
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                updateContent(['services', 'services'], [...currentServices]);
+                              }}
+                            >
+                              Update Service
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => {
+                                const newServices = currentServices.filter((_, i) => i !== index);
+                                updateContent(['services', 'services'], newServices.length > 0 ? newServices : defaultServicesContent.services);
+                              }}
+                            >
+                              Delete Service
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </Card>
@@ -3750,9 +3804,31 @@ function WebsiteContentPageContent() {
                   const currentImages = content.photoGallery?.images && content.photoGallery.images.length > 0 
                     ? content.photoGallery.images 
                     : defaultPhotoGalleryContent.images;
-                  return (
-                    <Card key={image.id || index} className="p-4">
-                      <div className="space-y-3">
+                    return (
+                      <Card key={image.id || index} className="p-4">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-semibold text-gray-700">
+                              Certificate {index + 1}
+                            </span>
+                          </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-semibold text-gray-700">
+                            Image {index + 1}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                            title="Delete this image"
+                            onClick={() => {
+                              const newImages = currentImages.filter((_, i) => i !== index);
+                              updateContent(['photoGallery', 'images'], newImages.length > 0 ? newImages : defaultPhotoGalleryContent.images);
+                            }}
+                          >
+                            <Trash className="w-4 h-4" />
+                          </Button>
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <label className="text-xs text-gray-600 mb-1 block">Image URL</label>
@@ -3783,18 +3859,28 @@ function WebsiteContentPageContent() {
                             />
                           </div>
                         </div>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => {
-                            const newImages = currentImages.filter((_, i) => i !== index);
-                            updateContent(['photoGallery', 'images'], newImages.length > 0 ? newImages : defaultPhotoGalleryContent.images);
-                          }}
-                          className="mt-2"
-                        >
-                          <Trash className="w-4 h-4 mr-2" />
-                          Remove Image
-                        </Button>
+                        <div className="flex gap-2 justify-end mt-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              const newImages = [...currentImages];
+                              updateContent(['photoGallery', 'images'], newImages);
+                            }}
+                          >
+                            Update Image
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => {
+                              const newImages = currentImages.filter((_, i) => i !== index);
+                              updateContent(['photoGallery', 'images'], newImages.length > 0 ? newImages : defaultPhotoGalleryContent.images);
+                            }}
+                          >
+                            Delete Image
+                          </Button>
+                        </div>
                       </div>
                     </Card>
                   );
@@ -4423,17 +4509,28 @@ function WebsiteContentPageContent() {
                         <div className="space-y-3">
                           <div className="flex items-center justify-between mb-3">
                             <h4 className="text-sm font-semibold text-gray-700">FAQ {index + 1}</h4>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => {
-                                const newFAQs = currentFAQs.filter((_, i) => i !== index);
-                                updateContent(['faq', 'faqs'], newFAQs.length > 0 ? newFAQs : defaultFAQContent.faqs);
-                              }}
-                            >
-                              <Trash className="w-4 h-4 mr-2" />
-                              FAQ সরান
-                            </Button>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  updateContent(['faq', 'faqs'], [...currentFAQs]);
+                                }}
+                              >
+                                আপডেট FAQ
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => {
+                                  const newFAQs = currentFAQs.filter((_, i) => i !== index);
+                                  updateContent(['faq', 'faqs'], newFAQs.length > 0 ? newFAQs : defaultFAQContent.faqs);
+                                }}
+                              >
+                                <Trash className="w-4 h-4 mr-2" />
+                                FAQ মুছুন
+                              </Button>
+                            </div>
                           </div>
                           <div>
                             <label className="text-xs text-gray-600 mb-1 block">প্রশ্ন</label>
