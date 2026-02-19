@@ -38,16 +38,16 @@ export default function About({ initialContent }: AboutProps = {}) {
   }, [initialContent]);
 
   return (
-    <section className="relative bg-white py-20 px-4 md:px-6 lg:px-8">
+    <section className="relative bg-white px-4 py-14 sm:py-16 md:px-6 lg:px-8 lg:py-20">
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col items-center gap-12 lg:flex-row lg:items-center lg:gap-16">
           {/* Left Side - Images */}
           <div className="relative w-full lg:w-1/2">
             {/* Main Image Cluster */}
-            <div className="relative h-[500px] md:h-[600px] lg:h-[650px]">
+            <div className="relative h-[360px] sm:h-[430px] md:h-[560px] lg:h-[650px]">
               {/* Left Circle - Collaboration Scene */}
               <div
-                className={`absolute left-0 top-8 z-10 aspect-square w-full max-w-[380px] overflow-hidden rounded-full shadow-2xl md:max-w-[420px] lg:max-w-[450px] ${
+                className={`absolute left-0 top-8 z-10 aspect-square w-full max-w-[260px] overflow-hidden rounded-full shadow-2xl sm:max-w-[320px] md:max-w-[420px] lg:max-w-[450px] ${
                   isLoaded ? "animate-fade-in-scale" : "animate-on-load"
                 }`}
                 style={{ animationDelay: "0.2s" }}
@@ -63,7 +63,7 @@ export default function About({ initialContent }: AboutProps = {}) {
 
               {/* Right Circle - Young Woman */}
               <div
-                className={`absolute bottom-0 right-0 z-20 aspect-square w-64 overflow-hidden rounded-full border-4 border-white shadow-2xl md:w-72 lg:w-80 ${
+                className={`absolute bottom-0 right-0 z-20 aspect-square w-40 overflow-hidden rounded-full border-4 border-white shadow-2xl sm:w-52 md:w-72 lg:w-80 ${
                   isLoaded ? "animate-fade-in-scale" : "animate-on-load"
                 }`}
                 style={{ animationDelay: "0.4s" }}
@@ -98,7 +98,7 @@ export default function About({ initialContent }: AboutProps = {}) {
 
             {/* Experience Box - Oval shape in top right */}
             <div
-              className={`absolute right-0 top-0 z-30 rounded-full px-6 py-4 shadow-xl md:px-8 md:py-5 lg:px-10 lg:py-6 ${
+              className={`absolute right-2 top-2 z-30 rounded-full px-4 py-3 shadow-xl sm:right-0 sm:top-0 sm:px-6 sm:py-4 md:px-8 md:py-5 lg:px-10 lg:py-6 ${
                 isLoaded ? "animate-fade-in-up" : "animate-on-load"
               }`}
               style={{
@@ -109,7 +109,7 @@ export default function About({ initialContent }: AboutProps = {}) {
               }}
             >
               <div className="text-center">
-                <div className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">
+                <div className="text-2xl font-bold text-white sm:text-3xl md:text-4xl lg:text-5xl">
                   {aboutContent.experience.number}
                 </div>
                 <div
@@ -188,7 +188,7 @@ export default function About({ initialContent }: AboutProps = {}) {
 
             {/* Main Heading */}
             <h2
-              className={`mb-6 text-3xl font-bold leading-tight md:text-4xl lg:text-5xl ${
+            className={`mb-6 text-2xl font-bold leading-tight sm:text-3xl md:text-4xl lg:text-5xl ${
                 isLoaded ? "animate-fade-in-up" : "animate-on-load"
               }`}
               style={{
@@ -224,7 +224,7 @@ export default function About({ initialContent }: AboutProps = {}) {
               style={{ animationDelay: "0.7s" }}
             >
               {aboutContent.features.map((feature, index) => (
-                <div key={index} className="flex items-start gap-4 rounded-xl bg-white p-6 shadow-lg transition-all hover:shadow-xl">
+                <div key={index} className="flex items-start gap-4 rounded-xl bg-white p-4 shadow-lg transition-all hover:shadow-xl sm:p-6">
                   <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-purple-100">
                     <svg
                       width="28"
@@ -335,5 +335,4 @@ export default function About({ initialContent }: AboutProps = {}) {
     </section>
   );
 }
-
 

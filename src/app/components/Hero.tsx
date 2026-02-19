@@ -61,14 +61,9 @@ export default function Hero({ initialContent }: HeroProps = {}) {
 
   return (
     <section
-      className="relative flex items-center justify-center overflow-hidden pb-40"
-      style={{
-        paddingTop: "120px",
-        position: "relative",
-        zIndex: 1,
-      }}
+      className="relative z-[1] flex items-center justify-center overflow-hidden px-4 pb-16 pt-24 sm:pb-24 sm:pt-28 md:px-6 lg:px-8 lg:pb-40 lg:pt-32"
     >
-      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col items-center gap-8 px-4 md:flex-row md:items-center md:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col items-center gap-8 md:flex-row md:items-center">
         {/* Left Content */}
         <div className="flex w-full flex-col gap-6 md:w-1/2 md:gap-8">
           {/* Subtitle */}
@@ -219,7 +214,7 @@ export default function Hero({ initialContent }: HeroProps = {}) {
           >
             <a
               href={heroContent.buttons.primary.href}
-              className="group/btn relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-base font-semibold text-white transition-all duration-300 overflow-hidden md:px-8 md:py-3.5"
+              className="group/btn relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-lg px-6 py-3 text-base font-semibold text-white transition-all duration-300 sm:w-auto md:px-8 md:py-3.5"
               style={{
                 fontFamily: "var(--font-bengali), sans-serif",
                 background: "linear-gradient(135deg, #EC4899 0%, #A855F7 100%)",
@@ -253,7 +248,7 @@ export default function Hero({ initialContent }: HeroProps = {}) {
 
             <a
               href={heroContent.buttons.secondary.href}
-              className="group/btn relative flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#FF6B35] to-[#FF8C5A] px-6 py-3 text-base font-semibold text-white transition-all duration-300 overflow-hidden md:px-8 md:py-3.5"
+              className="group/btn relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-lg bg-gradient-to-r from-[#FF6B35] to-[#FF8C5A] px-6 py-3 text-base font-semibold text-white transition-all duration-300 sm:w-auto md:px-8 md:py-3.5"
               style={{ 
                 fontFamily: "var(--font-bengali), sans-serif",
                 boxShadow: "0 4px 15px rgba(255, 107, 53, 0.3)",
@@ -387,7 +382,7 @@ export default function Hero({ initialContent }: HeroProps = {}) {
           {/* Floating Card 1 - Students Count */}
           {heroContent.stats?.students?.enabled && (
             <div
-              className={`absolute left-0 -translate-x-1/2 top-4 z-20 rounded-xl bg-white p-3 shadow-xl transition-all hover:scale-105 md:left-4 md:top-8 lg:left-8 lg:top-12 lg:p-4 ${
+              className={`absolute left-0 top-4 z-20 hidden -translate-x-1/2 rounded-xl bg-white p-3 shadow-xl transition-all hover:scale-105 sm:block md:left-4 md:top-8 lg:left-8 lg:top-12 lg:p-4 ${
                 isLoaded ? "animate-fade-in-up" : "animate-on-load"
               }`}
               style={{ animationDelay: "0.9s" }}
@@ -420,7 +415,7 @@ export default function Hero({ initialContent }: HeroProps = {}) {
           {/* Floating Card 2 - Courses Count */}
           {heroContent.stats?.courses?.enabled && (
             <div
-              className={`absolute bottom-4 translate-x-1/2 right-0 z-20 flex items-center gap-2 rounded-xl bg-white p-3 shadow-xl transition-all hover:scale-105 md:bottom-8 md:right-4 lg:bottom-12 lg:right-8 lg:gap-3 lg:p-4 ${
+              className={`absolute bottom-4 right-0 z-20 hidden translate-x-1/2 items-center gap-2 rounded-xl bg-white p-3 shadow-xl transition-all hover:scale-105 sm:flex md:bottom-8 md:right-4 lg:bottom-12 lg:right-8 lg:gap-3 lg:p-4 ${
                 isLoaded ? "animate-fade-in-up" : "animate-on-load"
               }`}
               style={{ animationDelay: "1.1s" }}
@@ -478,4 +473,3 @@ export default function Hero({ initialContent }: HeroProps = {}) {
     </section>
   );
 }
-

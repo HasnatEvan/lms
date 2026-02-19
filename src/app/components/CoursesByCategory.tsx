@@ -205,7 +205,7 @@ export default function CoursesByCategory({ initialContent, initialCategories, i
   }, [selectedCategory]);
 
   return (
-    <section className="relative bg-white py-20 px-4 md:px-6 lg:px-8">
+    <section className="relative bg-white px-4 py-14 sm:py-16 md:px-6 lg:px-8 lg:py-20">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-8 flex flex-col gap-6 md:mb-12">
@@ -232,7 +232,7 @@ export default function CoursesByCategory({ initialContent, initialCategories, i
 
               {/* Main Title */}
               <h2
-                className={`text-3xl font-bold leading-tight md:text-4xl lg:text-5xl ${
+                className={`text-2xl font-bold leading-tight sm:text-3xl md:text-4xl lg:text-5xl ${
                   isLoaded ? "animate-fade-in-up" : "animate-on-load"
                 }`}
                 style={{
@@ -426,7 +426,7 @@ export default function CoursesByCategory({ initialContent, initialCategories, i
           <div className="mt-10 flex justify-center">
             <button
               onClick={loadMoreCourses}
-              className="group flex items-center gap-2 rounded-lg px-8 py-3.5 text-base font-semibold text-white transition-all hover:shadow-xl hover:scale-105"
+              className="group flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold text-white transition-all hover:scale-105 hover:shadow-xl sm:px-8 sm:py-3.5 sm:text-base"
               style={{
                 background: `linear-gradient(135deg, ${coursesByCategoryContent.buttonGradientFrom} 0%, ${coursesByCategoryContent.buttonGradientTo} 100%)`,
                 boxShadow: "0 4px 15px rgba(236, 72, 153, 0.3)",
@@ -458,4 +458,3 @@ export default function CoursesByCategory({ initialContent, initialCategories, i
     </section>
   );
 }
-

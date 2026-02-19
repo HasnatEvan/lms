@@ -9,21 +9,25 @@ interface StatisticsProps {
   initialContent?: StatisticsContent;
 }
 
-// Icon components based on iconType using react-icons
-const IconRenderer = ({ iconType }: { iconType: 'students' | 'courses' | 'tutors' | 'awards' }) => {
+// Icon Renderer (unchanged)
+const IconRenderer = ({
+  iconType,
+}: {
+  iconType: "students" | "courses" | "tutors" | "awards";
+}) => {
   const iconProps = {
     size: 48,
     className: "text-white",
   };
 
   switch (iconType) {
-    case 'students':
+    case "students":
       return <LuUsers {...iconProps} />;
-    case 'courses':
+    case "courses":
       return <LuBookOpen {...iconProps} />;
-    case 'tutors':
+    case "tutors":
       return <LuGraduationCap {...iconProps} />;
-    case 'awards':
+    case "awards":
       return <LuAward {...iconProps} />;
     default:
       return null;
@@ -33,30 +37,21 @@ const IconRenderer = ({ iconType }: { iconType: 'students' | 'courses' | 'tutors
 export default function Statistics({ initialContent }: StatisticsProps = {}) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [statisticsContent, setStatisticsContent] = useState<StatisticsContent>(initialContent || defaultStatisticsContent);
+  const [statisticsContent, setStatisticsContent] =
+    useState<StatisticsContent>(initialContent || defaultStatisticsContent);
   const [counts, setCounts] = useState([0, 0, 0, 0]);
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Only fetch if initialContent was not provided (fallback for client-side updates)
     if (!initialContent) {
-      const fetchStatisticsContent = async () => {
-        try {
-          const response = await fetch('/api/website-content', {
-            cache: 'force-cache',
-            next: { tags: ['website-content'] },
-          });
-          if (response.ok) {
-            const data = await response.json();
-            if (data.data?.statistics) {
-              setStatisticsContent(data.data.statistics);
-            }
-          }
-        } catch (error) {
-          console.error('Error fetching statistics content:', error);
-        }
-      };
-      fetchStatisticsContent();
+      fetch("/api/website-content")
+        .then((res) => res.json())
+        .then(
+          (data) =>
+            data.data?.statistics &&
+            setStatisticsContent(data.data.statistics)
+        )
+        .catch(console.error);
     }
     setIsLoaded(true);
   }, [initialContent]);
@@ -67,7 +62,6 @@ export default function Statistics({ initialContent }: StatisticsProps = {}) {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !isVisible) {
             setIsVisible(true);
-            // Start countdown animation
             animateCounts();
           }
         });
@@ -75,102 +69,102 @@ export default function Statistics({ initialContent }: StatisticsProps = {}) {
       { threshold: 0.3 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+    if (sectionRef.current) observer.observe(sectionRef.current);
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
+      if (sectionRef.current) observer.unobserve(sectionRef.current);
     };
   }, [isVisible]);
 
   const animateCounts = () => {
-    const targets = statisticsContent.items.map(item => parseInt(item.number));
-    const durations = [2000, 2000, 2000, 2000]; // 2 seconds for each
-    const steps = 60; // Number of animation steps
+    const targets = statisticsContent.items.map((item) =>
+      parseInt(item.number)
+    );
+    const steps = 60;
+    const duration = 2000;
 
     targets.forEach((target, index) => {
-      let currentStep = 0;
+      let step = 0;
       const increment = target / steps;
-      const stepDuration = durations[index] / steps;
+      const interval = duration / steps;
 
       const timer = setInterval(() => {
-        currentStep++;
-        const currentValue = Math.min(Math.floor(increment * currentStep), target);
-        
+        step++;
         setCounts((prev) => {
-          const newCounts = [...prev];
-          newCounts[index] = currentValue;
-          return newCounts;
+          const next = [...prev];
+          next[index] = Math.min(Math.floor(step * increment), target);
+          return next;
         });
 
-        if (currentStep >= steps) {
+        if (step >= steps) {
           clearInterval(timer);
-          // Ensure final value is exact
-          setCounts((prev) => {
-            const newCounts = [...prev];
-            newCounts[index] = target;
-            return newCounts;
-          });
         }
-      }, stepDuration);
+      }, interval);
     });
   };
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden bg-gradient-to-b from-white to-[#FEF9F3] py-12 px-4 md:px-6 lg:px-8">
+    <section
+      ref={sectionRef}
+      className="relative overflow-hidden bg-[#dbecff] px-4 py-14 sm:py-16 md:px-6 lg:px-8 lg:py-20"
+    >
+      <div className="pointer-events-none absolute -left-20 top-8 h-56 w-56 rounded-full bg-cyan-200/45 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 bottom-0 h-64 w-64 rounded-full bg-amber-200/40 blur-3xl" />
+
       <div className="relative z-10 mx-auto max-w-7xl">
+        <div className="mb-10 text-center">
+          <span className="inline-flex rounded-full border border-cyan-700/20 bg-cyan-700/10 px-4 py-2 text-xs font-semibold tracking-[0.18em] text-cyan-800 uppercase">
+            Impact Snapshot
+          </span>
+          <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">
+            আমাদের শেখার যাত্রার পরিসংখ্যান
+          </h2>
+        </div>
+
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {statisticsContent.items.map((stat, index) => (
             <div
               key={stat.id}
-              className={`group relative overflow-hidden rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-2xl hover:scale-[1.02] md:p-8 ${
+              className={`group relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white/90 p-6 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.6)] transition-all hover:-translate-y-1.5 hover:shadow-[0_18px_35px_-20px_rgba(15,23,42,0.7)] md:p-8 ${
                 isLoaded ? "animate-fade-in-up" : "animate-on-load"
               }`}
               style={{ animationDelay: `${0.1 + index * 0.1}s` }}
             >
-              {/* Decorative Background Gradient */}
-              <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#A855F7]/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
-              
+              {/* Soft Hover Glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-amber-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
               <div className="relative flex flex-col items-center text-center">
-                {/* Icon with Orange Circle */}
+                {/* Icon */}
                 <div className="relative mb-4 flex h-16 w-16 items-center justify-center">
-                  <div
-                    className="absolute inset-0 rounded-full transition-transform duration-300 group-hover:scale-110"
-                    style={{
-                      background: "linear-gradient(135deg, #FFB84D 0%, #FF8C42 50%, #FF6B35 100%)",
-                    }}
-                  />
-                  <div className="relative z-10 flex items-center justify-center">
-                    <div className="scale-[0.7]">
-                      <IconRenderer iconType={stat.iconType} />
-                    </div>
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-700 via-teal-600 to-emerald-600 transition-transform duration-300 group-hover:scale-110" />
+                  <div className="relative z-10 scale-[0.7]">
+                    <IconRenderer iconType={stat.iconType} />
                   </div>
                 </div>
 
                 {/* Number */}
                 <div className="mb-2">
                   <span
-                    className="text-3xl font-bold text-[#1E3A8A] md:text-4xl lg:text-5xl"
+                    className="text-3xl font-extrabold text-slate-900 md:text-4xl lg:text-5xl"
                     style={{ fontFamily: "var(--font-bengali), sans-serif" }}
                   >
                     {isVisible ? counts[index] : 0}
-                    <sup className="text-xl md:text-2xl lg:text-3xl">{stat.suffix}</sup>
+                    <sup className="ml-0.5 text-xl text-cyan-700 md:text-2xl">
+                      {stat.suffix}
+                    </sup>
                   </span>
                 </div>
 
                 {/* Label */}
                 <p
-                  className="text-sm font-semibold text-[#1E3A8A] md:text-base"
+                  className="text-sm font-semibold text-slate-600 md:text-base"
                   style={{ fontFamily: "var(--font-bengali), sans-serif" }}
                 >
                   {stat.labelBengali}
                 </p>
 
-                {/* Decorative Border on Hover */}
-                <div className="absolute inset-0 rounded-2xl border-2 border-transparent bg-gradient-to-r from-[#A855F7] via-[#EC4899] to-[#A855F7] opacity-0 transition-opacity duration-300 group-hover:opacity-20" style={{ backgroundSize: "200% 200%" }}></div>
+                {/* Hover Border */}
+                <div className="pointer-events-none absolute inset-0 rounded-3xl border border-transparent bg-gradient-to-r from-cyan-600 via-emerald-500 to-amber-500 opacity-0 transition-opacity duration-300 group-hover:opacity-20" />
               </div>
             </div>
           ))}

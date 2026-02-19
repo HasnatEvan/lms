@@ -42,7 +42,7 @@ export default function PhotoGallery({ initialContent }: PhotoGalleryProps) {
   }, [initialContent]);
 
   return (
-    <section className="relative bg-white py-20">
+    <section className="relative bg-[#dbecff] py-14 sm:py-16 lg:py-20">
       <div className="w-full">
         {/* Header */}
         <div className="mb-12 text-center md:mb-16 mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
@@ -65,7 +65,7 @@ export default function PhotoGallery({ initialContent }: PhotoGalleryProps) {
 
           {/* Main Title */}
           <h2
-            className={`text-3xl font-bold leading-tight md:text-4xl lg:text-5xl ${
+            className={`text-2xl font-bold leading-tight sm:text-3xl md:text-4xl lg:text-5xl ${
               isLoaded ? "animate-fade-in-up" : "animate-on-load"
             }`}
             style={{
@@ -119,14 +119,14 @@ export default function PhotoGallery({ initialContent }: PhotoGalleryProps) {
                     {duplicatedImages.map((item, index) => (
                       <div
                         key={`${item.id}-${index}`}
-                        className="group relative aspect-square w-[150px] sm:w-[200px] md:w-[250px] lg:w-[300px] flex-shrink-0 overflow-hidden rounded-xl transition-all hover:scale-105 hover:shadow-xl"
+                        className="group relative aspect-square w-[120px] sm:w-[180px] md:w-[250px] lg:w-[300px] flex-shrink-0 overflow-hidden rounded-xl transition-all hover:scale-105 hover:shadow-xl"
             >
               <Image
                 src={item.image}
                 alt={item.alt}
                 fill
                 className="object-cover transition-transform duration-300 group-hover:scale-110"
-                          sizes="(max-width: 640px) 150px, (max-width: 768px) 200px, (max-width: 1024px) 250px, 300px"
+                          sizes="(max-width: 640px) 120px, (max-width: 768px) 180px, (max-width: 1024px) 250px, 300px"
               />
               {/* Overlay on Hover */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
@@ -142,4 +142,3 @@ export default function PhotoGallery({ initialContent }: PhotoGalleryProps) {
     </section>
   );
 }
-

@@ -63,7 +63,7 @@ export default function Services({ initialContent }: ServicesProps = {}) {
   }, [initialContent]);
 
   return (
-    <section className="relative bg-white py-20 px-4 md:px-6 lg:px-8">
+    <section className="relative bg-white px-4 py-14 sm:py-16 md:px-6 lg:px-8 lg:py-20">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-12 text-center md:mb-16">
@@ -104,7 +104,7 @@ export default function Services({ initialContent }: ServicesProps = {}) {
 
           {/* Main Title */}
           <h2
-            className={`text-3xl font-bold leading-tight md:text-4xl lg:text-5xl ${
+            className={`text-2xl font-bold leading-tight sm:text-3xl md:text-4xl lg:text-5xl ${
               isLoaded ? "animate-fade-in-up" : "animate-on-load"
             }`}
             style={{
@@ -185,7 +185,7 @@ export default function Services({ initialContent }: ServicesProps = {}) {
               <div className="relative">
                 {/* Title */}
                 <h3
-                  className="mb-3 text-xl font-bold text-[#1E3A8A] transition-colors duration-300 group-hover:text-[#A855F7]"
+                  className="mb-3 text-lg font-bold text-[#1E3A8A] transition-colors duration-300 group-hover:text-[#A855F7] sm:text-xl"
                   style={{ fontFamily: "var(--font-bengali), sans-serif" }}
                 >
                   {service.titleBengali}

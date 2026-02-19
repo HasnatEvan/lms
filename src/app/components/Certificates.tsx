@@ -41,7 +41,7 @@ export default function Certificates({ initialContent }: CertificatesProps) {
   }, [initialContent]);
 
   return (
-    <section className="relative bg-gradient-to-b from-white to-[#FEF9F3] py-20 px-4 md:px-6 lg:px-8">
+    <section className="relative bg-[#dbecff] px-4 py-14 sm:py-16 md:px-6 lg:px-8 lg:py-20">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-12 text-center md:mb-16">
@@ -64,7 +64,7 @@ export default function Certificates({ initialContent }: CertificatesProps) {
 
           {/* Main Title */}
           <h2
-            className={`text-3xl font-bold leading-tight md:text-4xl lg:text-5xl ${
+            className={`text-2xl font-bold leading-tight sm:text-3xl md:text-4xl lg:text-5xl ${
               isLoaded ? "animate-fade-in-up" : "animate-on-load"
             }`}
             style={{
@@ -197,7 +197,7 @@ export default function Certificates({ initialContent }: CertificatesProps) {
         </div>
 
         {/* About the Institution Section */}
-        <div className="mt-20 bg-white p-8 rounded-2xl">
+        <div className="mt-16 rounded-2xl bg-white p-5 sm:p-8 lg:mt-20">
           <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-16">
             {/* Left Side - Text Content */}
             <div className="w-full lg:w-1/2">
@@ -237,7 +237,7 @@ export default function Certificates({ initialContent }: CertificatesProps) {
                 style={{ animationDelay: "1.3s" }}
               >
                 {/* Photo Container */}
-                <div className="group relative mb-6 h-[400px] w-full max-w-[350px] md:h-[450px] md:max-w-[400px]">
+                <div className="group relative mb-6 h-[340px] w-full max-w-[300px] sm:h-[400px] sm:max-w-[350px] md:h-[450px] md:max-w-[400px]">
                   {/* Decorative Background Gradient */}
                   <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#A855F7] via-[#EC4899] to-[#10B981] opacity-20 blur-sm transition-opacity duration-300 group-hover:opacity-40"></div>
                   
@@ -265,7 +265,7 @@ export default function Certificates({ initialContent }: CertificatesProps) {
                   </div>
                   
                   {/* Floating Badge */}
-                  <div className="absolute -right-4 top-4 z-10 rounded-full bg-gradient-to-r from-[#A855F7] to-[#EC4899] px-4 py-2 shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                  <div className="absolute right-2 top-3 z-10 rounded-full bg-gradient-to-r from-[#A855F7] to-[#EC4899] px-4 py-2 shadow-lg transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110 sm:-right-4 sm:top-4">
                     <div className="flex items-center gap-2">
                       <LuBuilding className="w-4 h-4 text-white" />
                       <span className="text-xs font-semibold text-white">Team</span>

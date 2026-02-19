@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
@@ -190,6 +190,7 @@ export default function Header({ initialContent }: HeaderProps = {}) {
   const { getCartItemCount, isLoaded: cartLoaded } = useCart();
   const [isSticky, setIsSticky] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const closeDropdownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [content, setContent] = useState<WebsiteContent>(initialContent || defaultContent);
   const [cachedAuthStatus, setCachedAuthStatus] = useState<{ isAuthenticated: boolean; userId?: string } | null>(null);
@@ -280,6 +281,31 @@ export default function Header({ initialContent }: HeaderProps = {}) {
     router.push('/');
     setProfileDropdownOpen(false);
   };
+
+  const handleDropdownEnter = (dropdownKey: string) => {
+    if (closeDropdownTimeoutRef.current) {
+      clearTimeout(closeDropdownTimeoutRef.current);
+      closeDropdownTimeoutRef.current = null;
+    }
+    setOpenDropdown(dropdownKey);
+  };
+
+  const handleDropdownLeave = () => {
+    if (closeDropdownTimeoutRef.current) {
+      clearTimeout(closeDropdownTimeoutRef.current);
+    }
+    closeDropdownTimeoutRef.current = setTimeout(() => {
+      setOpenDropdown(null);
+    }, 220);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (closeDropdownTimeoutRef.current) {
+        clearTimeout(closeDropdownTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     // Always fetch fresh content to ensure dynamic updates
@@ -466,12 +492,12 @@ export default function Header({ initialContent }: HeaderProps = {}) {
         </Link>
 
         {/* Navigation Menu */}
-        <nav className="hidden items-center gap-5 lg:gap-6 xl:gap-8 md:flex">
+        <nav className="hidden items-center gap-5 lg:gap-6 xl:gap-8 lg:flex">
           {/* Home Dropdown */}
           <div
             className="relative"
-            onMouseEnter={() => setOpenDropdown("home")}
-            onMouseLeave={() => setOpenDropdown(null)}
+            onMouseEnter={() => handleDropdownEnter("home")}
+            onMouseLeave={handleDropdownLeave}
           >
             <button
               className="group flex items-center gap-1.5 text-[15px] font-medium text-gray-800 transition-colors hover:text-[#7B2CBF]"
@@ -495,7 +521,11 @@ export default function Header({ initialContent }: HeaderProps = {}) {
               </svg>
             </button>
             {openDropdown === "home" && (
-              <div className="absolute left-0 top-full z-50 mt-2 w-56 rounded-xl bg-white shadow-2xl border border-gray-100 py-2 animate-fade-in-up overflow-hidden">
+              <div
+                className="absolute left-0 top-full z-50 mt-2 w-56 rounded-xl bg-white shadow-2xl border border-gray-100 py-2 animate-fade-in-up overflow-hidden"
+                onMouseEnter={() => handleDropdownEnter("home")}
+                onMouseLeave={handleDropdownLeave}
+              >
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-50/50 to-pink-50/50 pointer-events-none"></div>
                 <div className="relative">
                   {content.navigation.home.items.map((item, index) => (
@@ -516,8 +546,8 @@ export default function Header({ initialContent }: HeaderProps = {}) {
           {/* Category Dropdown */}
           <div
             className="relative"
-            onMouseEnter={() => setOpenDropdown("category")}
-            onMouseLeave={() => setOpenDropdown(null)}
+            onMouseEnter={() => handleDropdownEnter("category")}
+            onMouseLeave={handleDropdownLeave}
           >
             <button
               className="group flex items-center gap-1.5 text-[15px] font-medium text-gray-800 transition-colors hover:text-[#7B2CBF]"
@@ -541,7 +571,11 @@ export default function Header({ initialContent }: HeaderProps = {}) {
               </svg>
             </button>
             {openDropdown === "category" && (
-              <div className="absolute left-0 top-full z-50 mt-2 w-56 rounded-xl bg-white shadow-2xl border border-gray-100 py-2 animate-fade-in-up overflow-hidden">
+              <div
+                className="absolute left-0 top-full z-50 mt-2 w-56 rounded-xl bg-white shadow-2xl border border-gray-100 py-2 animate-fade-in-up overflow-hidden"
+                onMouseEnter={() => handleDropdownEnter("category")}
+                onMouseLeave={handleDropdownLeave}
+              >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 pointer-events-none"></div>
                 <div className="relative">
                   {content.navigation.category.items.map((item, index) => (
@@ -562,8 +596,8 @@ export default function Header({ initialContent }: HeaderProps = {}) {
           {/* Pages Dropdown */}
           <div
             className="relative"
-            onMouseEnter={() => setOpenDropdown("pages")}
-            onMouseLeave={() => setOpenDropdown(null)}
+            onMouseEnter={() => handleDropdownEnter("pages")}
+            onMouseLeave={handleDropdownLeave}
           >
             <button
               className="group flex items-center gap-1.5 text-[15px] font-medium text-gray-800 transition-colors hover:text-[#7B2CBF]"
@@ -587,7 +621,11 @@ export default function Header({ initialContent }: HeaderProps = {}) {
               </svg>
             </button>
             {openDropdown === "pages" && (
-              <div className="absolute left-0 top-full z-50 mt-2 w-56 rounded-xl bg-white shadow-2xl border border-gray-100 py-2 animate-fade-in-up overflow-hidden">
+              <div
+                className="absolute left-0 top-full z-50 mt-2 w-56 rounded-xl bg-white shadow-2xl border border-gray-100 py-2 animate-fade-in-up overflow-hidden"
+                onMouseEnter={() => handleDropdownEnter("pages")}
+                onMouseLeave={handleDropdownLeave}
+              >
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-50/50 to-pink-50/50 pointer-events-none"></div>
                 <div className="relative">
                   {content.navigation.pages.items.map((item, index) => (
@@ -608,8 +646,8 @@ export default function Header({ initialContent }: HeaderProps = {}) {
           {/* Courses Dropdown */}
           <div
             className="relative"
-            onMouseEnter={() => setOpenDropdown("courses")}
-            onMouseLeave={() => setOpenDropdown(null)}
+            onMouseEnter={() => handleDropdownEnter("courses")}
+            onMouseLeave={handleDropdownLeave}
           >
             <button
               className="group flex items-center gap-1.5 text-[15px] font-medium text-gray-800 transition-colors hover:text-[#7B2CBF]"
@@ -633,7 +671,11 @@ export default function Header({ initialContent }: HeaderProps = {}) {
               </svg>
             </button>
             {openDropdown === "courses" && (
-              <div className="absolute left-0 top-full z-50 mt-2 w-56 rounded-xl bg-white shadow-2xl border border-gray-100 py-2 animate-fade-in-up overflow-hidden">
+              <div
+                className="absolute left-0 top-full z-50 mt-2 w-56 rounded-xl bg-white shadow-2xl border border-gray-100 py-2 animate-fade-in-up overflow-hidden"
+                onMouseEnter={() => handleDropdownEnter("courses")}
+                onMouseLeave={handleDropdownLeave}
+              >
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-50/50 to-amber-50/50 pointer-events-none"></div>
                 <div className="relative">
                   {content.navigation.courses.items.map((item, index) => (
@@ -654,8 +696,8 @@ export default function Header({ initialContent }: HeaderProps = {}) {
           {/* Account Dropdown */}
           <div
             className="relative"
-            onMouseEnter={() => setOpenDropdown("account")}
-            onMouseLeave={() => setOpenDropdown(null)}
+            onMouseEnter={() => handleDropdownEnter("account")}
+            onMouseLeave={handleDropdownLeave}
           >
             <button
               className="group flex items-center gap-1.5 text-[15px] font-medium text-gray-800 transition-colors hover:text-[#7B2CBF]"
@@ -679,7 +721,11 @@ export default function Header({ initialContent }: HeaderProps = {}) {
               </svg>
             </button>
             {openDropdown === "account" && (
-              <div className="absolute left-0 top-full z-50 mt-2 w-56 rounded-xl bg-white shadow-2xl border border-gray-100 py-2 animate-fade-in-up overflow-hidden">
+              <div
+                className="absolute left-0 top-full z-50 mt-2 w-56 rounded-xl bg-white shadow-2xl border border-gray-100 py-2 animate-fade-in-up overflow-hidden"
+                onMouseEnter={() => handleDropdownEnter("account")}
+                onMouseLeave={handleDropdownLeave}
+              >
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 pointer-events-none"></div>
                 <div className="relative">
                   {content.navigation.account.items.map((item, index) => (
@@ -737,7 +783,7 @@ export default function Header({ initialContent }: HeaderProps = {}) {
           </button> */}
 
           {/* Shopping Cart Icon */}
-          <Link href="/cart" className="relative hidden text-gray-700 transition-colors hover:text-[#7B2CBF] md:block">
+          <Link href="/cart" className="relative hidden text-gray-700 transition-colors hover:text-[#7B2CBF] lg:block">
             <svg
               width="22"
               height="22"
@@ -764,7 +810,7 @@ export default function Header({ initialContent }: HeaderProps = {}) {
           {content.buttons.liveCourse.enabled && (
             <Link
               href={content.buttons.liveCourse.href || "#"}
-              className="group hidden items-center gap-2 rounded-lg border-2 border-[#FF6B35] bg-white px-4 py-2.5 text-sm font-semibold text-[#FF6B35] transition-all hover:bg-[#FF6B35] hover:text-white hover:shadow-lg md:flex"
+              className="group hidden items-center gap-2 rounded-lg border-2 border-[#FF6B35] bg-white px-4 py-2.5 text-sm font-semibold text-[#FF6B35] transition-all hover:bg-[#FF6B35] hover:text-white hover:shadow-lg lg:flex"
               style={{
                 fontFamily: "var(--font-bengali), sans-serif",
               }}
@@ -779,7 +825,7 @@ export default function Header({ initialContent }: HeaderProps = {}) {
 
           {/* User Profile or Login Button */}
           {!isAuthLoading && shouldShowProfile ? (
-            <div className="relative hidden md:block profile-dropdown-container">
+            <div className="relative hidden lg:block profile-dropdown-container">
               <button
                 className="cursor-pointer flex items-center gap-2 rounded-full transition-all hover:opacity-80"
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
@@ -874,7 +920,7 @@ export default function Header({ initialContent }: HeaderProps = {}) {
           ) : !isAuthLoading ? (
             <Link
               href={content.buttons.login.href}
-              className="group/btn relative hidden items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 overflow-hidden md:flex"
+              className="group/btn relative hidden items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 overflow-hidden lg:flex"
               style={{
                 fontFamily: "var(--font-bengali), sans-serif",
                 background: "linear-gradient(135deg, #EC4899 0%, #A855F7 100%)",
@@ -909,7 +955,8 @@ export default function Header({ initialContent }: HeaderProps = {}) {
           {/* Hamburger Menu */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="text-gray-800 transition-colors hover:text-[#7B2CBF] md:hidden"
+            className="text-gray-800 transition-colors hover:text-[#7B2CBF] lg:hidden"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           >
             <svg
               width="24"
@@ -918,13 +965,23 @@ export default function Header({ initialContent }: HeaderProps = {}) {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path
-                d="M3 12H21M3 6H21M3 18H21"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+              {isMenuOpen ? (
+                <path
+                  d="M6 6L18 18M18 6L6 18"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              ) : (
+                <path
+                  d="M3 12H21M3 6H21M3 18H21"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              )}
             </svg>
           </button>
         </div>
@@ -932,8 +989,8 @@ export default function Header({ initialContent }: HeaderProps = {}) {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="absolute left-0 top-full z-50 w-full bg-white shadow-lg md:hidden">
-          <nav className="flex flex-col gap-4 p-4">
+        <div className="absolute left-0 top-full z-50 w-full bg-white shadow-lg lg:hidden">
+          <nav className="flex max-h-[calc(100vh-5rem)] flex-col gap-4 overflow-y-auto p-4">
             {content.mobileMenu.items.map((item, index) => (
               <Link
                 key={index}
@@ -1074,4 +1131,3 @@ export default function Header({ initialContent }: HeaderProps = {}) {
     </>
   );
 }
-

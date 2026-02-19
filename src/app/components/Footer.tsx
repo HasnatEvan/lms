@@ -108,7 +108,7 @@ export default function Footer({ initialContent }: FooterProps) {
         background: `linear-gradient(to bottom right, ${footerContent.backgroundGradient.from} 0%, ${footerContent.backgroundGradient.to} 100%)`,
       }}
     >
-      <div className="relative z-10 mx-auto max-w-7xl px-4 py-12 md:px-6 lg:px-8 lg:py-16">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 py-10 md:px-6 md:py-12 lg:px-8 lg:py-16">
         {/* Main Footer Content */}
         <div className="mb-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Branding and Newsletter */}
@@ -152,7 +152,7 @@ export default function Footer({ initialContent }: FooterProps) {
               >
                 {footerContent.newsletter.title}
               </h3>
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row">
                 <div className="relative flex-1">
                   <div className="absolute left-3 top-1/2 -translate-y-1/2">
                     <LuMail className="w-4 h-4 text-gray-400" />
@@ -315,7 +315,7 @@ export default function Footer({ initialContent }: FooterProps) {
         </div>
 
         {/* Copyright and Social Media */}
-        <div className="flex flex-col items-center justify-between gap-4 border-t border-gray-200 pt-8 md:flex-row">
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-gray-200 pt-8 text-center md:flex-row md:text-left">
           <p
             className="text-sm text-gray-600"
             style={{ fontFamily: "var(--font-bengali), sans-serif" }}
@@ -334,7 +334,7 @@ export default function Footer({ initialContent }: FooterProps) {
       {isButtonVisible && (
         <button
           onClick={scrollToTop}
-          className={`group fixed bottom-8 right-8 z-50 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full text-white shadow-2xl transition-all duration-500 hover:scale-110 hover:shadow-[0_0_20px_rgba(168,85,247,0.6)] ${
+          className={`group fixed bottom-4 right-4 z-50 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-white shadow-2xl transition-all duration-500 hover:scale-110 hover:shadow-[0_0_20px_rgba(168,85,247,0.6)] sm:bottom-8 sm:right-8 sm:h-12 sm:w-12 ${
             isAnimatingOut ? "animate-slide-up-to-top" : "animate-slide-down-from-top"
           }`}
           style={{
@@ -395,4 +395,3 @@ export default function Footer({ initialContent }: FooterProps) {
     </footer>
   );
 }
-

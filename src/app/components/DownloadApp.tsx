@@ -41,13 +41,13 @@ export default function DownloadApp({ initialContent }: DownloadAppProps) {
   }, [initialContent]);
 
   return (
-    <section className="relative overflow-hidden py-12 px-4 md:px-6 lg:px-8 bg-white pb-40">
+    <section className="relative overflow-hidden bg-[#dbecff] px-4 py-12 pb-20 md:px-6 lg:px-8 lg:pb-32">
   
       <div className="relative z-10 mx-auto max-w-7xl">
         <div className="download-wrap relative flex flex-col items-center gap-8 rounded-3xl backdrop-blur-sm shadow-2xl lg:flex-row lg:gap-12">
           {/* Left Side - Content */}
-          <div className="w-full lg:w-1/2 ">
-          <div className="lg:m-8 m-6">
+          <div className="w-full lg:w-1/2">
+          <div className="m-5 sm:m-6 lg:m-8">
                         {/* Download Our App Badge */}
             <div
               className={`mb-4 inline-flex items-center gap-3 rounded-full px-5 py-2.5 ${
@@ -67,7 +67,7 @@ export default function DownloadApp({ initialContent }: DownloadAppProps) {
 
             {/* Main Title */}
             <h2
-              className={`mb-4 text-2xl font-bold leading-tight md:text-3xl lg:text-4xl ${
+              className={`mb-4 text-xl font-bold leading-tight sm:text-2xl md:text-3xl lg:text-4xl ${
                 isLoaded ? "animate-fade-in-up" : "animate-on-load"
               }`}
               style={{
@@ -109,7 +109,7 @@ export default function DownloadApp({ initialContent }: DownloadAppProps) {
               {/* Google Play Button */}
               <a
                 href={downloadAppContent.buttons.googlePlay.href}
-                className="group flex cursor-pointer items-center justify-center gap-2 rounded-full px-5 py-3 text-xs font-semibold text-white transition-all hover:shadow-xl hover:scale-105"
+                className="group flex cursor-pointer items-center justify-center gap-2 rounded-full px-5 py-3 text-xs font-semibold text-white transition-all hover:scale-105 hover:shadow-xl sm:text-sm"
                 style={{
                   background: `linear-gradient(135deg, ${downloadAppContent.buttons.googlePlay.gradientFrom} 0%, ${downloadAppContent.buttons.googlePlay.gradientTo} 100%)`,
                   boxShadow: "0 4px 15px rgba(168, 85, 247, 0.4)",
@@ -140,7 +140,7 @@ export default function DownloadApp({ initialContent }: DownloadAppProps) {
               {/* App Store Button */}
               <a
                 href={downloadAppContent.buttons.appStore.href}
-                className="group flex cursor-pointer items-center justify-center gap-2 rounded-full px-5 py-3 text-xs font-semibold text-white transition-all hover:shadow-xl hover:scale-105"
+                className="group flex cursor-pointer items-center justify-center gap-2 rounded-full px-5 py-3 text-xs font-semibold text-white transition-all hover:scale-105 hover:shadow-xl sm:text-sm"
                 style={{
                   background: downloadAppContent.buttons.appStore.gradientVia
                     ? `linear-gradient(135deg, ${downloadAppContent.buttons.appStore.gradientFrom} 0%, ${downloadAppContent.buttons.appStore.gradientVia} 50%, ${downloadAppContent.buttons.appStore.gradientTo} 100%)`
@@ -186,4 +186,3 @@ export default function DownloadApp({ initialContent }: DownloadAppProps) {
     </section>
   );
 }
-

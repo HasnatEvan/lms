@@ -113,7 +113,7 @@ export default function Testimonials() {
   }
 
   return (
-    <section className="ts-bg relative overflow-hidden py-20 px-4 md:px-6 lg:px-8">
+    <section className="ts-bg relative overflow-hidden px-4 py-14 sm:py-16 md:px-6 lg:px-8 lg:py-20">
 
       <div className="relative z-10 mx-auto max-w-7xl">
         {/* Header */}
@@ -154,7 +154,7 @@ export default function Testimonials() {
 
           {/* Main Title */}
           <h2
-            className={`text-3xl font-bold leading-tight md:text-4xl lg:text-5xl ${
+            className={`text-2xl font-bold leading-tight sm:text-3xl md:text-4xl lg:text-5xl ${
               isLoaded ? "animate-fade-in-up" : "animate-on-load"
             }`}
             style={{
@@ -411,4 +411,3 @@ export default function Testimonials() {
     </section>
   );
 }
-

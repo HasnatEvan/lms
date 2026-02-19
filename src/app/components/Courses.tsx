@@ -284,7 +284,7 @@ export default function Courses({ initialCourses, initialContent }: CoursesProps
 
   return (
     <section
-      className="course-area bg-img relative bg-gradient-to-b from-[#FEF9F3] to-[#F3E5F5] py-20 px-4 md:px-6 lg:px-8"
+      className="course-area relative bg-[#dbecff] px-4 py-14 sm:py-16 md:px-6 lg:px-8 lg:py-20"
     >
       <div className="relative z-10 mx-auto max-w-7xl">
         {/* Header */}
@@ -308,7 +308,7 @@ export default function Courses({ initialCourses, initialContent }: CoursesProps
 
           {/* Main Title */}
           <h2
-            className={`text-3xl font-bold leading-tight md:text-4xl lg:text-5xl ${
+            className={`text-2xl font-bold leading-tight sm:text-3xl md:text-4xl lg:text-5xl ${
               isLoaded ? "animate-fade-in-up" : "animate-on-load"
             }`}
             style={{
@@ -396,7 +396,7 @@ export default function Courses({ initialCourses, initialContent }: CoursesProps
           <div className="mt-10 flex justify-center">
             <Link
               href={coursesContent.buttonHref}
-              className="group flex items-center gap-2 rounded-lg px-8 py-3.5 text-base font-semibold text-white transition-all hover:shadow-xl hover:scale-105"
+              className="group flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold text-white transition-all hover:scale-105 hover:shadow-xl sm:px-8 sm:py-3.5 sm:text-base"
               style={{
                 background: `linear-gradient(135deg, ${coursesContent.buttonGradientFrom} 0%, ${coursesContent.buttonGradientTo} 100%)`,
                 boxShadow: "0 4px 15px rgba(236, 72, 153, 0.3)",
