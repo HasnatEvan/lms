@@ -8,7 +8,7 @@
     "build:analyze": "ANALYZE=true next build",
     "build:fast": "next build --no-lint",
     "build:optimize": "bun run scripts/optimize-build.js",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "create-admin": "bun run scripts/create-admin.js",
     "create-student": "bun run scripts/create-student.js",
     "create-teacher": "bun run scripts/create-teacher.js",
