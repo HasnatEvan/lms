@@ -1,24 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Sans_Bengali } from "next/font/google";
 import "./globals.css";
 import "plyr/dist/plyr.css";
 import Providers from "@/components/Providers";
 import { getWebsiteContent } from "@/lib/website-content";
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const notoSansBengali = Noto_Sans_Bengali({
-  variable: "--font-bengali",
-  subsets: ["bengali"],
-  weight: ["400", "500", "600", "700"],
-});
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -52,15 +36,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${notoSansBengali.variable} antialiased`}
+        className="antialiased"
       >
-          <Providers>
+        <Providers>
           {children}
-
-
-          </Providers>
+        </Providers>
       </body>
     </html>
   );
